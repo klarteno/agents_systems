@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+    id 'idea' // optional (to generate IntelliJ IDEA project files)
+}
+
+group 'newGroupId'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation('org.junit.jupiter:junit-jupiter:5.5.1')
+    testCompile("org.assertj:assertj-core:3.13.2")
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
