@@ -1,0 +1,66 @@
+package srch.nodes;
+
+import env.model.WorldModel;
+import level.Direction;
+import level.Location;
+import srch.Node;
+import srch.interfaces.IDirectionNode;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+public class LocationNode extends Node implements IDirectionNode {
+	
+	private Direction direction;
+
+	public LocationNode(Location initial, int initialStep) 
+	{
+		super(initial, initialStep);
+		
+		this.direction = null;
+	}
+
+	public LocationNode(Node parent, Direction direction, Location location) 
+	{
+		super(parent, location);
+		
+		this.direction = direction;
+	}
+
+	@Override
+	public Direction getDirection() 
+	{
+		return direction;
+	}
+
+	@Override
+	public List<Node> getExpandedNodes()
+	{
+		List<Node> expandedNodes = new ArrayList<Node>(Direction.EVERY.length);
+		
+		for (Direction dir : Direction.EVERY)
+		{
+			Location loc = this.getLocation().newLocation(dir);
+			
+			if (WorldModel.getInstance().isFree(this.getObject(), loc))
+			{
+				expandedNodes.add(new LocationNode(this, dir, loc));
+			}
+		}
+		return expandedNodes;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Location> extractPlan() 
+	{
+		LinkedList<Location> plan = new LinkedList<Location>();
+		
+		for (Node n = this; n != null; n = n.getParent())
+		{
+			plan.addFirst(n.getLocation());
+		}		
+		return plan;
+	}
+}

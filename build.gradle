@@ -15,6 +15,10 @@ repositories {
 dependencies {
     testImplementation('org.junit.jupiter:junit-jupiter:5.5.1')
     testCompile("org.assertj:assertj-core:3.13.2")
+
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jdk8
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.9.9'
+
 }
 
 test {
@@ -23,3 +27,28 @@ test {
         events "passed", "skipped", "failed"
     }
 }
+
+jar {
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    manifest {
+        attributes(
+                'Implementation-Title': 'agents_system',
+                "Main-Class": "mas.Main"
+        )
+    }
+    destinationDirectory = file("$rootDir")
+    archivesBaseName = 'client'
+}
+
+
+
+
+
+
+
+
+
+
+
