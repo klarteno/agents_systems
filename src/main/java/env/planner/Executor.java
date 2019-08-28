@@ -40,7 +40,7 @@ public class Executor {
 	protected boolean getAgentToBox(Agent agent, Box box)
 	{
 		int initialStep = planner.getInitialStep(agent);
-		List<Action> actions = ActionSearch.search(agent, agent, box.getLocation(), 1, initialStep);
+		List<Action> actions = ActionSearch.search(agent, agent, box.getLocation(), 1, initialStep,planner.worlProxy.getCellModel().getGridOperations());
 
 		if (actions == null)
 		{
@@ -67,7 +67,7 @@ public class Executor {
 	{
 		int initialStep = planner.getInitialStep(agent);
 		
-		List<Action> actions = ActionSearch.search(agent, tracked, location, 0, initialStep);
+		List<Action> actions = ActionSearch.search(agent, tracked, location, 0, initialStep,planner.worlProxy.getCellModel().getGridOperations());
 
 		if (actions == null)
 		{
@@ -78,7 +78,6 @@ public class Executor {
 		logger.info(tracked + " to " + location + ":\t\t" + actions.toString());
 
 		planner.getActions().get(agent.getNumber()).addAll(actions);
-
 		executeActions(agent, initialStep, actions);
 		
 		return true;
@@ -113,10 +112,12 @@ public class Executor {
 		// Create models for the actions
 		planner.createModels(initialStep, actions);
 
+
+
 		// Update the grid models with the actions
 		for (Action action : actions)
 		{
-			futureModel.doExecute(action);
+			futureModel.getCellMode().doExecute(action);
 			
 			updateFuture(futureModel, ++step);
 		}
@@ -135,7 +136,6 @@ public class Executor {
 	private void updateFuture(FutureModel futureModel, int step)
 	{		
 		Map<Cell, Location> originalLocations = futureModel.getOriginalLocations();
-		
 		CellModel model = planner.getModel(step);
 		
 		Map<Cell, Cell> objectReferences = new HashMap<>();
@@ -144,9 +144,7 @@ public class Executor {
 		for (Entry<Cell, Location> entry : originalLocations.entrySet())
 		{
 			int objectType = entry.getKey() instanceof Agent ? GridOperations.AGENT : GridOperations.BOX;
-			
 			Cell object = model.removeCell(objectType, entry.getValue());
-			
 			objectReferences.put(entry.getKey(), object);
 		}
 		
@@ -159,7 +157,7 @@ public class Executor {
 	
 	private void addLock(Agent agent, int step)
 	{
-		GridOperations model = planner.getModel(step);
+		GridOperations model = planner.getModel(step).getGridOperations();
 		
 		for (int actionStep = step - 1; actionStep < planner.getActions().get(agent.getNumber()).size(); actionStep++)
 		{

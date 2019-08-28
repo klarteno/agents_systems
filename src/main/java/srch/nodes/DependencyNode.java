@@ -1,6 +1,7 @@
 package srch.nodes;
 
 import env.model.CellModel;
+import env.model.GridOperations;
 import level.Direction;
 import level.Location;
 import srch.Node;
@@ -30,7 +31,7 @@ public class DependencyNode extends Node implements IDirectionNode, IModelNode, 
 		this.model				= model;
 	}
 
-	public DependencyNode(Node parent, Direction dir, Location loc) 
+	private DependencyNode(Node parent, Direction dir, Location loc)
 	{
 		super(parent, loc);
 		
@@ -53,8 +54,8 @@ public class DependencyNode extends Node implements IDirectionNode, IModelNode, 
 	}
 
 	@Override
-	public CellModel getModel() {
-		return model;
+	public GridOperations getModel() {
+		return model.getGridOperations();
 	}
 	
 	public int getDependency() {
@@ -67,7 +68,7 @@ public class DependencyNode extends Node implements IDirectionNode, IModelNode, 
 	}
 
 	@Override
-	public List<Node> getExpandedNodes() 
+	public List<Node> getExpandedNodes(GridOperations gridOperationsssss)
 	{
 		List<Node> expandedNodes = new ArrayList<Node>(Direction.EVERY.length);
 		
@@ -75,7 +76,7 @@ public class DependencyNode extends Node implements IDirectionNode, IModelNode, 
 		{
 			Location loc = this.getLocation().newLocation(dir);
 			
-			if (model.isFree(this.getObject(), loc))
+			if (model.getGridOperations().isFree(this.getObject(), loc))
 			{
 				expandedNodes.add(new DependencyNode(this, dir, loc));
 			}

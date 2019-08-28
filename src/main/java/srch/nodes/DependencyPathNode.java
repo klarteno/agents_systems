@@ -1,7 +1,6 @@
 package srch.nodes;
 
 import env.model.GridOperations;
-import env.model.WorldModel;
 import env.planner.Planner;
 import level.DependencyPath;
 import level.Direction;
@@ -16,10 +15,12 @@ import util.ModelUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DependencyPathNode extends StepNode implements IDirectionNode, IDependencyNode, IModelNode {
+public class DependencyPathNode extends Node implements IDirectionNode, IDependencyNode, IModelNode {
+
+	private int step;
 
 	private static Planner planner = Planner.getInstance();
-	
+
 	private Direction 	direction;
 	private Agent		agent;
 	private int 		dependency;
@@ -27,41 +28,47 @@ public class DependencyPathNode extends StepNode implements IDirectionNode, IDep
 	private boolean 	ignoreLast;
 	private GridOperations model;
 
-	public DependencyPathNode(Location initial, Agent agent, int dependency, boolean includeLast, int initialStep) 
+	public DependencyPathNode(Location initial, Agent agent, int dependency, boolean includeLast, int initialStep)
 	{
-		super(initial, initialStep);
-		
+		super(initial);
+
+		this.step = initialStep;
+
 		this.direction 			= null;
 		this.agent				= agent;
 		this.dependency 		= dependency;
 		this.dependencyCount 	= 0;
 		this.ignoreLast			= includeLast;
-		this.model				= planner.getModel(initialStep);
+		this.model				= planner.getModel(initialStep).getGridOperations();
 	}
 
-	public DependencyPathNode(StepNode parent, Direction dir, Location loc)
+	private DependencyPathNode(DependencyPathNode parent, Direction dir, Location loc)
 	{
 		super(parent, loc);
-		
-		DependencyPathNode n = (DependencyPathNode) parent;
-		
-		this.direction			= dir;
-		this.agent				= n.agent;
-		this.dependency 		= n.dependency;
-		this.dependencyCount 	= n.dependencyCount;
-		this.ignoreLast			= n.ignoreLast;
-		this.model				= n.model;
 
-		if (planner.getLastStep() < getStep() && planner.getLastModel().hasObject(dependency, loc))
-		{
-			dependencyCount++;
-		}
-		else if (planner.hasModel(getStep() - 1) && planner.getModel(getStep() - 1).hasObject(dependency, loc) ||
-				 planner.hasModel(getStep()    ) && planner.getModel(getStep()    ).hasObject(dependency, loc) ||
-				 planner.hasModel(getStep() + 1) && planner.getModel(getStep() + 1).hasObject(dependency, loc))
-		{
-			dependencyCount++;
-		}
+		this.step = parent.getStep() + 1;
+
+
+		this.direction			= dir;
+		this.agent				= parent.agent;
+		this.dependency 		= parent.dependency;
+		this.dependencyCount 	= parent.dependencyCount + planner.getDependencyCount(getStep(),loc,this.dependency);;
+		this.ignoreLast			= parent.ignoreLast;
+		this.model				= parent.model;
+
+
+		//dependencyCount +=  planner.getDependencyCount(getStep(),loc,this.dependency);
+	}
+
+	@Override
+	public DependencyPathNode getParent() {
+		return (DependencyPathNode) super.getParent();
+	}
+
+
+	int getStep()
+	{
+		return this.step;
 	}
 
 	@Override
@@ -82,7 +89,7 @@ public class DependencyPathNode extends StepNode implements IDirectionNode, IDep
 	}
 
 	@Override
-	public List<Node> getExpandedNodes() 
+	public List<Node> getExpandedNodes(GridOperations gridOperationssss)
 	{
 		List<Node> expandedNodes = new ArrayList<Node>(Direction.EVERY.length);
 		
@@ -108,17 +115,17 @@ public class DependencyPathNode extends StepNode implements IDirectionNode, IDep
 		
 		for (int futureStep = this.getStep(); futureStep < planner.dataModelCount(); futureStep++)
 		{				
-			if (hasDependency(planner.getModel(futureStep), this, agNumber))
+			if (hasDependency(planner.getModel(futureStep).getGridOperations(), this, agNumber))
 			{
 				path.addDependency(this.getLocation(), futureStep);
 			}
-			if (this.getParent() != null && hasDependency(planner.getModel(futureStep), this.getParent(), agNumber))
+			if (this.getParent() != null && hasDependency(planner.getModel(futureStep).getGridOperations(), this.getParent(), agNumber))
 			{
 				path.addDependency(this.getParent().getLocation(), futureStep);
 			}
 		}			
 		
-		for (StepNode n = this; n != null; n = (StepNode) n.getParent())
+		for (DependencyPathNode n = this; n != null; n = (DependencyPathNode) n.getParent())
 		{			
 			Location loc = n.getLocation();
 			
@@ -129,11 +136,11 @@ public class DependencyPathNode extends StepNode implements IDirectionNode, IDep
 			
 			for (int step : new int[]{ n.getStep() - 1, n.getStep(), n.getStep() + 1 })
 			{
-				if (planner.getLastStep() < n.getStep() && hasDependency(planner.getLastModel(), n, agNumber))
+                if (planner.getLastStep() < n.getStep() && hasDependency(planner.getModel(planner.getLastStep()).getGridOperations(), n, agNumber))
 				{
 					path.addDependency(loc, planner.getLastStep());
 				}
-				else if (planner.hasModel(step) && hasDependency(planner.getModel(step), n, agNumber)) 
+				else if (planner.hasModel(step) && hasDependency(planner.getModel(step).getGridOperations(), n, agNumber))
 				{
 					path.addDependency(loc, step);
 				}
@@ -142,7 +149,7 @@ public class DependencyPathNode extends StepNode implements IDirectionNode, IDep
 		return path;
 	}
 	
-	private boolean hasDependency(GridOperations model, StepNode n, int agNumber)
+	private boolean hasDependency(GridOperations model, DependencyPathNode n, int agNumber)
 	{
 		Location loc = n.getLocation();
 		
@@ -154,7 +161,7 @@ public class DependencyPathNode extends StepNode implements IDirectionNode, IDep
 				// Do not add dependency if dependency is box of agent's color
 //				!(model.hasObject(DataModel.BOX, loc) && model.getColor(loc).equals(agent.getColor())) && 
 				// Do not add dependency if dependency is agent itself
-				!(model.hasObject(agNumber, WorldModel.BOX_MASK, loc)));
+				!(model.hasObject(agNumber, GridOperations.BOX_MASK, loc)));
 	}
 
 }

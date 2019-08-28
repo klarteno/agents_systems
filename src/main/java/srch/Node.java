@@ -66,7 +66,7 @@ public abstract class Node {
 		return this.g;
 	}
 
-	public abstract List<? extends Node> getExpandedNodes();
+	public abstract List<? extends Node> getExpandedNodes(GridOperations gridOperations);
 
 	public abstract <T> T extractPlan();
 

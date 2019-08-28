@@ -13,13 +13,13 @@ public class CellModel extends ActionModel {
 
 	protected static final Logger logger = LoggerFactory.getLogger(CellModel.class.getName());
 	
-	protected Agent[]					agents;
-	protected Set<Goal>					goals;
-	protected Set<Box>					boxes;
+	Agent[]					agents;
+	Set<Goal>					goals;
+	Set<Box>					boxes;
 
-	protected Agent[][]					agentArray;
-	protected Goal[][]					goalArray;
-	protected Box[][]					boxArray;
+	Agent[][]					agentArray;
+	Goal[][]					goalArray;
+	Box[][]					boxArray;
 	
 	public CellModel(int width, int height, int nbAgs)
 	{
@@ -36,7 +36,7 @@ public class CellModel extends ActionModel {
 	
 	public CellModel(CellModel model)
 	{
-		super(model);
+		super(model.gridOperations);
 		
 		agents 		= model.agents.clone();
 		goals		= new HashSet<>(model.goals);
@@ -54,11 +54,7 @@ public class CellModel extends ActionModel {
 	public Agent getAgent(int i) {
 		return agents[i];
 	}
-	
-	public Location getAgPos(int i) {
-		return agents[i].getLocation();
-	}
-	
+
 	public Agent[] getAgents() {
 		return agents;
 	}
@@ -72,58 +68,38 @@ public class CellModel extends ActionModel {
 	}
 	
 	public Agent getAgent(Location l) {
-		return getAgent(l.x, l.y);
+		return agentArray[l.x][l.y];
 	}
 	
 	public Goal getGoal(Location l) {
-		return getGoal(l.x, l.y);
+		return goalArray[l.x][l.y];
 	}
 	
 	public Box getBox(Location l) {
-		return getBox(l.x, l.y);
+		return boxArray[l.x][l.y];
 	}
-	
-	public Agent getAgent(int x, int y) {
-		return agentArray[x][y];
-	}
-	
-	public Goal getGoal(int x, int y) {
-		return goalArray[x][y];
-	}
-	
-	public Box getBox(int x, int y) {
-		return boxArray[x][y];
-	}
-	
+
 	public boolean isSolved(Goal goal) {
-		return goal.getBox() == null ? false : goal.getLocation().equals(goal.getBox().getLocation());
+		return goal.getBox() != null && goal.getLocation().equals(goal.getBox().getLocation());
 	}
 	
 	public boolean isSolved(Box box) {
-		return box.getGoal() == null ? false : box.getLocation().equals(box.getGoal().getLocation());
+		return box.getGoal() != null && box.getLocation().equals(box.getGoal().getLocation());
 	}
 	
-	public boolean isSolved(Location l)
-	{
-		if (hasObject(BOX, l))
-		{
-			return isSolved(getBox(l));
-		}
-		return false;
-	}
-	
+
 	public void move(int obj, Location fr, Location to)
 	{
 		if (fr.equals(to)) return;
 		
 		switch (obj)
 		{
-		case AGENT: 
+		case GridOperations.AGENT:
 			agentArray[fr.x][fr.y].setLocation(to); 
 			agentArray[to.x][to.y] = agentArray[fr.x][fr.y];
 			agentArray[fr.x][fr.y] = null;
 			break;
-		case BOX:	
+		case GridOperations.BOX:
 			boxArray  [fr.x][fr.y].setLocation(to); 
 			boxArray  [to.x][to.y] = boxArray[fr.x][fr.y];
 			boxArray  [fr.x][fr.y] = null;
@@ -140,40 +116,40 @@ public class CellModel extends ActionModel {
 		
 		switch (obj)
 		{
-		case AGENT: 
+		case GridOperations.AGENT:
 			cell = agentArray[l.x][l.y];
 			agentArray[l.x][l.y] = null;
 			break;
-		case BOX:
+		case GridOperations.BOX:
 			cell = boxArray[l.x][l.y];
 			boxArray  [l.x][l.y] = null;
 			break;
 		default: return null;
 		}
-		super.remove(obj, l);
-		
+		gridOperations.remove(obj, l);
+
 		return cell;
 	}
 	
 	public void addCell(Colored data, Cell object)
 	{		
-		Location l = data.getLocation();
+		Location loc = data.getLocation();
 		
-		object.setLocation(l);
+		object.setLocation(loc);
 		
-		int type = data instanceof Agent ? AGENT : BOX;
+		int type = data instanceof Agent ? GridOperations.AGENT : GridOperations.BOX;
 		
 		if (data instanceof Agent)
 		{
-			agentArray[l.x][l.y] = (Agent) object;
+			agentArray[loc.x][loc.y] = (Agent) object;
 		}
 		else if (data instanceof Box)
 		{
-			boxArray[l.x][l.y] = (Box) object;
+			boxArray[loc.x][loc.y] = (Box) object;
 		}
 
-		add(type, l);
-		addLetter(data.getLetter(), type, l);
-		addColor(data.getColor(), l);
+		gridOperations.add(type, loc);
+		gridOperations.addLetter(data.getLetter(), type, loc);
+		gridOperations.addColor(data.getColor(), loc);
 	}
 }

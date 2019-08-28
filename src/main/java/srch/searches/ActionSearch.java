@@ -15,38 +15,28 @@ import srch.Node;
 import srch.Search;
 import srch.Strategy.BestFirst;
 import srch.nodes.ActionNode;
+import srch.nodes.DistanceNode;
 
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
 public class ActionSearch extends Search implements Heuristic {
-	
-	/**
-	 * Returns an ordered list of strings corresponding to the sequence of
-	 * directions to move to get to the goal, depending on the proximity.
-	 * The A* considers all boxes as obstacles, even if the box is on the 
-	 * goal location. 
-	 * @param from - Initial location.
-	 * @param to - Goal location.
-	 * @param proximity - The distance between the goal and the solution. 
-	 * With proximity = 0, the solution is a path to the goal location.
-	 * With proximity = 1, the solution is a path to a cell adjacent to the goal location.
-	 * @return Ordered list of directions leading to the goal.
-	 */
-	public static List<Action> search(Agent agent, Cell tracked, Location to, int proximity, int initialStep)
+
+	public static List<Action> search(Agent agent, Cell tracked, Location to, int proximity, int initialStep,GridOperations gridOperations)
 	{
-		return new ActionSearch(tracked.getLocation(), to, proximity).search(new ActionNode(agent, tracked, initialStep));
+		return new ActionSearch(tracked.getLocation(), to, proximity,gridOperations).search(new ActionNode(agent, tracked, initialStep),gridOperations);
 	}
 	
 	private Map<Location, Integer> distances;
 	private Location goalLocation;
 	private int 	 goalDistance;
 	
-	public ActionSearch(Location from, Location to, int proximity)
+	private ActionSearch(Location from, Location to, int proximity,GridOperations gridOperations)
 	{
-		distances = DistanceSearch.search(from, to);
-		
+		distances = new DistanceSearch(to, 0)
+				.search(new DistanceNode(from),gridOperations);
+
 		logger.setLevel(Level.OFF);
 		
 		this.setStrategy(new BestFirst(new AStar(this)));
@@ -60,7 +50,7 @@ public class ActionSearch extends Search implements Heuristic {
 	{
 		ActionNode node = (ActionNode) n;
 		
-		SimulationModel model = node.getModel();
+		SimulationModel model = node.getSimulationModel();
 		
 		int step = model.getStep();
 		
@@ -68,16 +58,16 @@ public class ActionSearch extends Search implements Heuristic {
 		{
 			return false;
 		}
-				
+
 		return   node.getTrackedLoc().distance(goalLocation) == goalDistance &&
-				!model.isBlocked(n.getLocation());
+				!model.getActionModel().getGridOperations().isBlocked(n.getLocation());
 	}
 
 	@Override
 	public int h(Node n) 
 	{
 		ActionNode node = (ActionNode) n;
-		SimulationModel model = node.getModel();
+		SimulationModel model = node.getSimulationModel();
 		
 		int goalDist = 0;
 		
@@ -100,8 +90,8 @@ public class ActionSearch extends Search implements Heuristic {
 		{
 			goalDist += loc.distance(n.getLocation());
 		}
-		
-		goalDist += model.countUnsolvedGoals();
+
+		goalDist += model.getActionModel().countUnsolvedGoals();
 		
 		Goal nextGoal = model.getAgent().peekFirst();
 		

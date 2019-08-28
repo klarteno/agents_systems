@@ -1,7 +1,5 @@
 package level.cell;
 
-import env.model.CellModel;
-
 public class Goal extends Lettered {
 	
 	private Box box;
@@ -10,16 +8,7 @@ public class Goal extends Lettered {
 	{
 		super(x, y, letter);
 	}
-	
-	public boolean isSolved(CellModel model)
-	{
-		Box box = model.getBox(this.getLocation());
-		if (box == null)
-			return false;
-		else
-			return Character.toLowerCase(box.getLetter()) == Character.toLowerCase(this.getLetter());
-	}
-	
+
 	public Box getBox() {
 		return box;
 	}
@@ -32,7 +21,20 @@ public class Goal extends Lettered {
 	public String toString() {
 		return "Goal: " + super.toString();
 	}
-	
+
+/*
+	public boolean isSolved(CellModel model)
+	{
+		Box box = model.getBox(this.getLocation());
+		if (box == null)
+			return false;
+		else
+			return Character.toLowerCase(box.getLetter()) == Character.toLowerCase(this.getLetter());
+	}
+
+*/
+
+
 //	public boolean hasDependencies(DataWorldModel model) {
 //		
 //		Iterator<Goal> it = dependencies.iterator();

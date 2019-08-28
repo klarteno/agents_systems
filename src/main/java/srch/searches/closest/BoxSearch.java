@@ -1,7 +1,7 @@
 package srch.searches.closest;
 
 import env.model.CellModel;
-import env.model.WorldModel;
+import env.model.GridOperations;
 import level.Location;
 import level.cell.Box;
 import srch.Node;
@@ -11,9 +11,9 @@ import java.util.Set;
 
 public class BoxSearch extends ClosestSearch {
 
-	public static Location search(Set<Box> boxes, char letter, Location from, CellModel model)
+	public static Location search(Set<Box> boxes, char letter, Location from, CellModel model,GridOperations gridOperations)
 	{
-		return new BoxSearch(boxes, letter, model).search(new ClosestNode(from, model));
+		return new BoxSearch(boxes, letter, model).search(new ClosestNode(from, model),gridOperations);
 	}
 	
 	private Set<Box> boxes;
@@ -22,7 +22,7 @@ public class BoxSearch extends ClosestSearch {
 
 	public BoxSearch(Set<Box> boxes, char letter, CellModel model)
 	{
-		super(WorldModel.BOX);
+		super(GridOperations.BOX);
 		
 		this.boxes 	= boxes;
 		this.letter = letter;

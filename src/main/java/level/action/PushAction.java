@@ -88,9 +88,7 @@ public class PushAction extends Action {
 		PushAction other = (PushAction) obj;
 		if (agentDir != other.agentDir)
 			return false;
-		if (boxDir != other.boxDir)
-			return false;
-		return true;
+		return boxDir == other.boxDir;
 	}
 
 }

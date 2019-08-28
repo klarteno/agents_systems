@@ -1,6 +1,7 @@
 package srch.nodes;
 
 import env.model.CellModel;
+import env.model.GridOperations;
 import level.Direction;
 import level.Location;
 import srch.Node;
@@ -19,13 +20,13 @@ public class ClosestNode extends Node implements IDirectionNode, IModelNode {
 		this(initial, 0, model);
 	}
 	
-	public ClosestNode(Location initial, int object, CellModel model) {
+	private ClosestNode(Location initial, int object, CellModel model) {
 		super(initial, object);
 		this.direction 	= null;
 		this.model 		= model;
 	}
 
-	public ClosestNode(Node parent, Direction direction, Location location) {
+	ClosestNode(Node parent, Direction direction, Location location) {
 		super(parent, location);
 		this.direction 	= direction;
 		this.model 		= ((ClosestNode) parent).model;
@@ -36,12 +37,12 @@ public class ClosestNode extends Node implements IDirectionNode, IModelNode {
 		return this.direction;
 	}
 	
-	public CellModel getModel() {
-		return this.model;
+	public GridOperations getModel() {
+		return this.model.getGridOperations();
 	}
 
 	@Override
-	public List<Node> getExpandedNodes()
+	public List<Node> getExpandedNodes(GridOperations gridOperationsssss)
 	{
 		List<Node> expandedNodes = new ArrayList<Node>(Direction.EVERY.length);
 		
@@ -49,7 +50,7 @@ public class ClosestNode extends Node implements IDirectionNode, IModelNode {
 		{
 			Location loc = this.getLocation().newLocation(dir);
 			
-			if (model.isFree(this.getObject(), loc))
+			if (model.getGridOperations().isFree(this.getObject(), loc))
 			{
 				expandedNodes.add(new ClosestNode(this, dir, loc));
 			}

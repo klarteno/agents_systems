@@ -6,6 +6,7 @@ import env.planner.Planner;
 import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Cell;
+import srch.nodes.DependencyPathNode;
 import srch.searches.DependencyPathSearch;
 
 import java.util.*;
@@ -22,14 +23,14 @@ public class DependencyPath {
 		dependencies 	= new HashMap<>();
 	}
 	
-	public void addToPath(Location l)
+	public void addToPath(Location loc)
 	{
-		path.addFirst(l);
+		path.addFirst(loc);
 	}
 	
-	public void addDependency(Location l, int step)
+	public void addDependency(Location loc, int step)
 	{
-		dependencies.put(l, step);
+		dependencies.put(loc, step);
 	}
 	
 	public List<Location> getPath()
@@ -37,7 +38,7 @@ public class DependencyPath {
 		return path;
 	}
 	
-	public boolean hasDependencies(Agent agent)
+	public boolean hasDependencies()
 	{
 		return !dependencies.isEmpty();
 //		if (dependencies.isEmpty()) 		return false;
@@ -45,7 +46,7 @@ public class DependencyPath {
 //		else 								return true;
 //		else return dependencies.entrySet().stream().anyMatch(e -> isDependency(agent, e));
 	}
-	
+/*
 	protected boolean isDependency(Agent agent, Entry<Location, Integer> entry)
 	{
 		CellModel model = Planner.getInstance().getModel(entry.getValue());
@@ -58,46 +59,43 @@ public class DependencyPath {
 		}
 		return true;
 	}
-	
-	public int countDependencies() 
+*/
+/*
+	public int countDependencies()
 	{
 		return dependencies.size();
 	}
-	
+*/
+
 //	public Map<Location, Integer> getDependencies()
 //	{
 //		return dependencies;
 //	}
 	
-	public Entry<Location, Integer> getDependency(Agent agent, Location loc)
+	public Entry<Location, Integer> getDependency(Location loc,Planner planner)
 	{
-		Planner planner =  Planner.getInstance();
-		
+
 		Optional<Entry<Location, Integer>> box = dependencies.entrySet().stream()
 				.filter(e -> planner.getModel(e.getValue()).hasObject(GridOperations.BOX, e.getKey()))
 				.sorted((e1, e2) -> e1.getKey().distance(loc) - e2.getKey().distance(loc))
 				.min((e1, e2) -> e1.getValue() - e2.getValue());
-		
-		if (box.isPresent())
-		{
-			return box.get();
-		}		
-		
-		return dependencies.entrySet().stream()
+
+		return box.orElseGet(() -> dependencies.entrySet().stream()
 				.sorted((e1, e2) -> e1.getKey().distance(loc) - e2.getKey().distance(loc))
-				.min((e1, e2) -> e1.getValue() - e2.getValue()).get();
+				.min((e1, e2) -> e1.getValue() - e2.getValue()).get());
+
 	}
 	
 	/**
 	 * Get the dependency path between the locations with a box.
 	 * @param agent
 	 * @param box
-	 * @param to
+	 * @param initialStep
 	 * @return
 	 */
-	public static DependencyPath getDependencyPath(Agent agent, Box box, int initialStep)
+	public  DependencyPath getDependencyPath(Agent agent, Box box, int initialStep,GridOperations gridOperations)
 	{
-		return getLocationDependencyPath(agent, agent.getLocation(), box.getLocation(), true, initialStep);
+		return getLocationDependencyPath(agent, agent.getLocation(), box.getLocation(), true, initialStep,gridOperations);
 	}
 	
 	/**
@@ -106,13 +104,14 @@ public class DependencyPath {
 	 * @param to
 	 * @return
 	 */
-	public static DependencyPath getDependencyPath(Agent agent, Cell tracked, Location to, int initialStep)
+	public DependencyPath getDependencyPath(Agent agent, Cell tracked, Location to, int initialStep, GridOperations gridOperations)
 	{
-		return getLocationDependencyPath(agent, tracked.getLocation(), to, false, initialStep);
+		return getLocationDependencyPath(agent, tracked.getLocation(), to, false, initialStep,gridOperations);
 	}
 	
-	private static DependencyPath getLocationDependencyPath(Agent agent, Location from, Location to, boolean toBox, int initialStep)
+	private static DependencyPath getLocationDependencyPath(Agent agent, Location from, Location to, boolean toBox, int initialStep, GridOperations gridOperations)
 	{
-		return DependencyPathSearch.search(agent, from, to, GridOperations.BOX | GridOperations.AGENT, toBox, initialStep);
+		int obj = GridOperations.BOX | GridOperations.AGENT;
+		return new DependencyPathSearch(to).search(new DependencyPathNode(from, agent, obj, toBox, initialStep),gridOperations);
 	}
 }

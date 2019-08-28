@@ -5,18 +5,16 @@ import java.util.Arrays;
 
 public class ServerEnv {
 
-    protected BufferedReader serverIn;  
-	protected PrintStream	serverOut;
+    private BufferedReader serverIn;
+	private PrintStream	serverOut;
     
-	public ServerEnv()
+	ServerEnv()
 	{
 		serverIn 	= new BufferedReader(new InputStreamReader(System.in));
 		serverOut 	= new PrintStream(new FileOutputStream(FileDescriptor.out));
 	}
 
-
-
-	public void sendJointActionToConsole(String[] jointAction)
+	void sendJointActionToConsole(String[] jointAction)
 	{
 			System.out.println(Arrays.toString(jointAction));
 			//System.in.read();
@@ -33,6 +31,5 @@ public class ServerEnv {
 		{
 			e.printStackTrace();
 		}
-
 	}
 }

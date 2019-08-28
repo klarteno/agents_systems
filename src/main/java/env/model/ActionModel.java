@@ -8,28 +8,25 @@ import level.action.PushAction;
 
 import java.util.Set;
 
-public class ActionModel extends GridOperations {
+public class ActionModel {
     
     private static Set<Location> goalLocations;
+	final GridOperations gridOperations;
 
-	public ActionModel(GridOperations model) {
-		super(model);
+	ActionModel(GridOperations model) {
+		gridOperations = new GridOperations(model);
 	}
 
-	public ActionModel(int width, int height) {
-		super(width, height);
-	}
-
-	public ActionModel(int[][] data) {
-		super(data);
+	ActionModel(int width, int height) {
+		gridOperations = new GridOperations(width, height);
 	}
 	
-	protected void setGoalLocations(Set<Location> locations) {
+	public void setGoalLocations(Set<Location> locations) {
 		goalLocations = locations;
 	}
 	
 	public int countUnsolvedGoals() {
-		return Math.toIntExact(goalLocations.stream().filter(goal -> !isSolved(goal)).count());
+		return Math.toIntExact(goalLocations.stream().filter(goal -> !gridOperations.isSolved(goal)).count());
 	}
 	
 	public void doExecute(Action action)
@@ -44,55 +41,74 @@ public class ActionModel extends GridOperations {
         throw new UnsupportedOperationException("Invalid action: " + action);    
 	}
     
-    public void doMove(MoveAction action)
+    private void doMove(MoveAction action)
     {
     	Location agLoc 	= action.getAgentLocation();
         Location nAgLoc 	= action.getNewAgentLocation();
     	
-        move(AGENT, agLoc, nAgLoc);
+        move(GridOperations.AGENT, agLoc, nAgLoc);
     }
     
-    public void doPush(PushAction action)
+    private void doPush(PushAction action)
     {
     	Location agLoc 	= action.getAgentLocation();
     	Location nAgLoc 	= action.getNewAgentLocation();
     	Location boxLoc 	= action.getBoxLocation();
     	Location nBoxLoc = action.getNewBoxLocation();
 
-        move(BOX, boxLoc, nBoxLoc);
-        move(AGENT, agLoc, nAgLoc);
+        move(GridOperations.BOX, boxLoc, nBoxLoc);
+        move(GridOperations.AGENT, agLoc, nAgLoc);
     }
     
-    public void doPull(PullAction action)
+    private void doPull(PullAction action)
     {
     	Location agLoc  	= action.getAgentLocation();
     	Location nAgLoc 	= action.getNewAgentLocation();
     	Location boxLoc 	= action.getBoxLocation();
     	Location nBoxLoc = action.getNewBoxLocation();
 
-    	move(AGENT, agLoc, nAgLoc);
-    	move(BOX, boxLoc, nBoxLoc);
+    	move(GridOperations.AGENT, agLoc, nAgLoc);
+    	move(GridOperations.BOX, boxLoc, nBoxLoc);
     }
 	
 	public void move(int obj, Location fr, Location to)
 	{		
-		if ((obj & GOAL) != 0)
+		if ((obj & GridOperations.GOAL) != 0)
 		{
-			obj |= getMasked(GOAL_MASK, fr);
+			obj |= gridOperations.getMasked(GridOperations.GOAL_MASK, fr);
 		}
-		else if ((obj & BOX) != 0)
+		else if ((obj & GridOperations.BOX) != 0)
 		{
-			obj |= getMasked(BOX_MASK, fr);
-			obj |= getMasked(COLOR_MASK, fr);
+			obj |= gridOperations.getMasked(GridOperations.BOX_MASK, fr);
+			obj |= gridOperations.getMasked(GridOperations.COLOR_MASK, fr);
 		}
-		else if ((obj & AGENT) != 0)
+		else if ((obj & GridOperations.AGENT) != 0)
 		{
-			obj |= getMasked(BOX_MASK, fr);
-			obj |= getMasked(COLOR_MASK, fr);			
+			obj |= gridOperations.getMasked(GridOperations.BOX_MASK, fr);
+			obj |= gridOperations.getMasked(GridOperations.COLOR_MASK, fr);
 		}
-				
-		remove	(obj, fr);
-		add		(obj, to);
+
+		gridOperations.remove(obj, fr);
+		gridOperations.add(obj, to);
 	}
 
+	public GridOperations getGridOperations() {
+		return gridOperations;
+	}
+
+	public boolean hasObject(int obj, Location l) {
+		return gridOperations.hasObject(obj, l);
+	}
+
+	public String toString() {
+		return gridOperations.toString();
+	}
+
+	public int hashCode() {
+		return gridOperations.hashCode();
+	}
+
+	public boolean equals(Object obj) {
+		return gridOperations.equals(obj);
+	}
 }

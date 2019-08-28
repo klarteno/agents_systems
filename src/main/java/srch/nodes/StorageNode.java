@@ -22,7 +22,7 @@ public class StorageNode extends ClosestNode {
 		this.agNumber 	= ModelUtil.getAgentNumber(agent);
 	}
 
-	public StorageNode(Node parent, Direction direction, Location location) {
+	private StorageNode(Node parent, Direction direction, Location location) {
 		super(parent, direction, location);		
 		this.agent 		= ((StorageNode) parent).agent;
 		this.agNumber 	= ((StorageNode) parent).agNumber;
@@ -33,7 +33,7 @@ public class StorageNode extends ClosestNode {
 	}
 
 	@Override
-	public List<Node> getExpandedNodes()
+	public List<Node> getExpandedNodes(GridOperations gridOperationssss)
 	{
 		List<Node> expandedNodes = new ArrayList<Node>(Direction.EVERY.length);
 		

@@ -1,5 +1,6 @@
 package srch.searches;
 
+import env.model.GridOperations;
 import level.Location;
 import srch.Evaluation.AStar;
 import srch.Heuristic;
@@ -11,12 +12,13 @@ import srch.nodes.DistanceNode;
 import java.util.Map;
 
 public class DistanceSearch extends Search implements Heuristic {
-
-	public static Map<Location, Integer> search(Location from, Location to)
+/*
+	public static Map<Location, Integer> search(Location from, Location to, GridOperations gridOperations)
 	{
-		return new DistanceSearch(to, 0).search(new DistanceNode(from));
+		//maybe bug ????
+		return new DistanceSearch(to, 0).search(new DistanceNode(from),gridOperations);
 	}
-	
+	*/
 	private Location goalLocation;
 	private int 	 goalDistance;
 	
@@ -29,11 +31,11 @@ public class DistanceSearch extends Search implements Heuristic {
 	}
 
 	@Override
-	public boolean isGoalState(Node n) 
+	public boolean isGoalState(Node n)
 	{
 		return n.getLocation().distance(goalLocation) == goalDistance;
 	}
-	
+
 	@Override
 	public int h(Node n) 
 	{		

@@ -1,5 +1,6 @@
 package srch.nodes;
 
+import env.model.GridOperations;
 import env.model.SimulationModel;
 import level.Location;
 import level.action.Action;
@@ -28,7 +29,7 @@ public class ActionNode extends Node implements IActionNode, IModelNode {
 		model 	= new SimulationModel(initialStep, agent, tracked);
 	}
 
-	public ActionNode(Node parent, Action action, SimulationModel model)
+	private ActionNode(Node parent, Action action, SimulationModel model)
 	{
 		super(parent, action.getNewAgentLocation());
 		
@@ -42,7 +43,7 @@ public class ActionNode extends Node implements IActionNode, IModelNode {
 		return action;
 	}
 	
-	public boolean isSkipNode()
+	private boolean isSkipNode()
 	{
 		if (action == null) return true;
 		return action.getType() == ActionType.SKIP;
@@ -53,17 +54,23 @@ public class ActionNode extends Node implements IActionNode, IModelNode {
 		return model.getTrackedLocation();
 	}
 	
-	public SimulationModel getModel() 
+	public GridOperations getModel()
+	{
+		return model.getActionModel().getGridOperations();
+	}
+
+	public SimulationModel getSimulationModel()
 	{
 		return model;
 	}
 
+
 	@Override
-	public List<Node> getExpandedNodes()
+	public List<Node> getExpandedNodes(GridOperations gridOperations)
 	{			
 		List<Node> expandedNodes = new ArrayList<Node>();
 		
-		List<Action> actions = this.getModel().isTrackedAgent() ? Action.EveryMove(this.getLocation(), this.getAction())
+		List<Action> actions = this.model.isTrackedAgent() ? Action.EveryMove(this.getLocation(), this.getAction())
 																: Action.EveryBox(this.getLocation(), this.getAction());
 		
 		for (Action action : actions)
@@ -119,11 +126,8 @@ public class ActionNode extends Node implements IActionNode, IModelNode {
 		} else if (!action.equals(other.action))
 			return false;
 		if (model == null) {
-			if (other.model != null)
-				return false;
-		} else if (!model.equals(other.model))
-			return false;
-		return true;
+			return other.model == null;
+		} else return model.equals(other.model);
 	}
 	
 	@Override

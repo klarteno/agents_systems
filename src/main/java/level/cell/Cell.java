@@ -10,12 +10,7 @@ public class Cell {
 	{
 		this.location = location;
 	}
-	
-	public Cell(int x, int y) 
-	{
-		this.location = new Location(x, y);
-	}
-	
+
 	public Cell(Cell cell)
 	{
 		this.location = new Location(cell.location.x, cell.location.y);
@@ -30,12 +25,7 @@ public class Cell {
 	{
 		this.location = location;
 	}
-	
-	public void setLocation(int x, int y) 
-	{
-		this.location = new Location(x, y);
-	}
-	
+
 	@Override
 	public String toString() {
 		return location.toString();
@@ -59,10 +49,7 @@ public class Cell {
 			return false;
 		Cell other = (Cell) obj;
 		if (location == null) {
-			if (other.location != null)
-				return false;
-		} else if (!location.equals(other.location))
-			return false;
-		return true;
+			return other.location == null;
+		} else return location.equals(other.location);
 	}
 }

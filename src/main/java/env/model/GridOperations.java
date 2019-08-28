@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 public class GridOperations {
 	
-	protected static final Logger logger = Logger.getLogger(WorldModel.class.getName());
+	protected static final Logger logger = Logger.getLogger(WorldFactory.class.getName());
 	
     public static final int 	AGENT   =  1;
 	public static final int		GOAL 	=  2;

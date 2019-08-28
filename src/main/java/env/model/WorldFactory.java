@@ -2,66 +2,44 @@ package env.model;
 
 import env.InputGridData;
 import level.Color;
-import level.Level;
-import level.cell.Agent;
-import level.cell.Box;
-import level.cell.Goal;
+import level.cell.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class WorldModel extends CellModel {
-	
+public class WorldFactory {
+
+	private final CellModel cellModel;
 	private Map<Character, Set<Goal>> 	goalMap;
 	private Map<Character, Set<Box>>  	boxMap;
 	
 	private int freeCells;
 	
-	private static WorldModel instance;
-	
+	private static WorldFactory instance;
+
 	/**
 	 * Constructs a new WorldModel based on a level.
 	 * @param level - InputGridData object
 	 */
-	public WorldModel(InputGridData level)
+	public WorldFactory(InputGridData level, CellModel cellModel)
 	{		
-		super(level.width, level.height, level.nbAgs);
+		this.cellModel = cellModel;
 		
 		goalMap 	= new HashMap<>();
 		boxMap		= new HashMap<>();
 		
 		initData(level.data, level.colors);
-		
-		setGoalLocations(goals.stream().map(goal -> goal.getLocation())
-									   .collect(Collectors.toSet()));
-		
+
 		instance = this;
 	}
-	
-	public static WorldModel getInstance() {
+
+	public static WorldFactory getInstance() {
 		return instance;
 	}
-	
+
 	public int getFreeCellCount() {
 		return freeCells;
 	}
-	
-	public Map<Character, Set<Goal>> getGoalMap() {
-		return goalMap;
-	}
-	
-	public Map<Character, Set<Box>> getBoxMap() {
-		return boxMap;
-	}
-	
-	public Set<Goal> getGoals(char letter) {
-		return goalMap.get(letter);
-	}
-	
-	public Set<Box> getBoxes(char letter) {
-		return boxMap.get(letter);
-	}
-	
+
 	/**
 	 * Initializes the grid with objects according to the 
 	 * data.
@@ -69,9 +47,9 @@ public class WorldModel extends CellModel {
 	 */
 	private void initData(char[][] data, Map<Character, String> colors) 
 	{		
-		for (int x = 0; x < width; x++) 
+		for (int x = 0; x < cellModel.getGridOperations().width; x++)
 		{
-			for (int y = 0; y < height; y++) 
+			for (int y = 0; y < cellModel.getGridOperations().height; y++)
 			{
 				char ch = data[x][y];
 				
@@ -81,56 +59,50 @@ public class WorldModel extends CellModel {
 				
 				else if (Character.isUpperCase(ch)) addBox(x, y, ch, Color.getColor(colors.get(ch)));
 				
-				else if (ch == '+') addWall(x, y);
+				else if (ch == '+') cellModel.gridOperations.add(GridOperations.WALL, x, y);
 				
 				else freeCells++;
 			}
 		}
-//		System.err.println(toString());
 	}
 	
-	protected void addAgent(int x, int y, char letter, Color color) 
+	private void addAgent(int x, int y, char letter, Color color)
 	{
 		Agent agent = new Agent(x, y, letter, color);
 		int number = agent.getNumber();
-		
-		add(AGENT, x, y);
-		addLetter(letter, BOX, x, y);
-		addColor(color, x, y);
-		agents[number] = agent;
-		agentArray[x][y] = agent;
+
+		cellModel.gridOperations.add(GridOperations.AGENT, x, y);
+		cellModel.gridOperations.addLetter(letter, GridOperations.BOX, x, y);
+		cellModel.gridOperations.addColor(color, x, y);
+		cellModel.agents[number] = agent;
+		cellModel.agentArray[x][y] = agent;
 	}
 	
-	protected void addGoal(int x, int y, char letter) 
+	private void addGoal(int x, int y, char letter)
 	{
 		Goal goal = new Goal(x, y, letter);
-		
-		add(GOAL, x, y);
-		addLetter(letter, GOAL, x, y);
-		goals.add(goal);
-		goalArray[x][y] = goal;
+
+		cellModel.gridOperations.add(GridOperations.GOAL, x, y);
+		cellModel.gridOperations.addLetter(letter, GridOperations.GOAL, x, y);
+		cellModel.goals.add(goal);
+		cellModel.goalArray[x][y] = goal;
 		addToMap(goalMap, letter, goal);
 	}
 	
-	protected void addBox(int x, int y, char upperCaseLetter, Color color) 
+	private void addBox(int x, int y, char upperCaseLetter, Color color)
 	{
 		char letter = Character.toLowerCase(upperCaseLetter);
 		
 		Box box = new Box(x, y, letter, color);
 
-		add(BOX, x, y);
-		addLetter(letter, BOX, x, y);
-		addColor(color, x, y);
-		boxes.add(box);
-		boxArray[x][y] = box;
+		cellModel.gridOperations.add(GridOperations.BOX, x, y);
+		cellModel.gridOperations.addLetter(letter, GridOperations.BOX, x, y);
+		cellModel.gridOperations.addColor(color, x, y);
+		cellModel.boxes.add(box);
+		cellModel.boxArray[x][y] = box;
 		addToMap(boxMap, letter, box);
 	}
-	
-	protected void addWall(int x, int y)
-	{
-		add(WALL, x, y);
-	}
-	
+
 	private static <T> void addToMap(Map<Character, Set<T>> map, char letter, T object)
 	{
 		if (map.containsKey(letter))
@@ -142,4 +114,17 @@ public class WorldModel extends CellModel {
 			map.put(letter, new HashSet<T>(Arrays.asList(object)));
 		}
 	}
+
+	public CellModel getCellModel() {
+		return cellModel;
+	}
+
+	public String toString() {
+		return cellModel.toString();
+	}
+
+	public int hashCode() {
+		return cellModel.hashCode();
+	}
+
 }

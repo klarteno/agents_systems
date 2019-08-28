@@ -13,11 +13,6 @@ public class MoveAction extends Action {
 		this.direction = direction;
 	}
 	
-//	public Direction getDirection() 
-//	{
-//		return direction;
-//	}
-	
 	@Override
 	public String toString()
 	{
@@ -31,7 +26,7 @@ public class MoveAction extends Action {
 	
 	@Override
 	public boolean isOpposite(Action action) {
-		return action instanceof MoveAction ? Direction.isOpposite(((MoveAction) action).direction, this.direction) : false;
+		return action instanceof MoveAction && Direction.isOpposite(((MoveAction) action).direction, this.direction);
 	}
 
 	@Override
@@ -51,8 +46,6 @@ public class MoveAction extends Action {
 		if (getClass() != obj.getClass())
 			return false;
 		MoveAction other = (MoveAction) obj;
-		if (direction != other.direction)
-			return false;
-		return true;
+		return direction == other.direction;
 	}
 }

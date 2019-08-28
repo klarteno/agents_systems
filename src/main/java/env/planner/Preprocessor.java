@@ -22,22 +22,19 @@ public class Preprocessor {
 	
 	private static final Logger logger = LoggerFactory.getLogger(Preprocessor.class.getName());
 	
-	private static CellModel model;
+	private  CellModel cellModel;
 
-	private Preprocessor() {}
+	public Preprocessor() {}
 	
-	public static List<Goal> preprocess(CellModel model)
+	public  List<Goal> preprocess(CellModel model)
 	{		
-		Preprocessor.model = model;
-		
+		this.cellModel = model;
+
 		long startTime = System.nanoTime();
 		
 		matchBoxesAndGoals();
-		
 		matchAgentsAndBoxes();
-		
 		List<Goal> goals = prioritizeGoals();
-		
 		matchAgentsAndGoals(goals);
 		
 		logger.info("Preprocessing done: " + ((System.nanoTime() - startTime) / 1000000000.0));
@@ -45,21 +42,20 @@ public class Preprocessor {
 		return goals;
 	}
 	
-	private static void matchBoxesAndGoals()
+	private  void matchBoxesAndGoals()
 	{		
-		Set<Box> availableBoxes = model.getBoxes().stream()
-				.filter(box -> !model.isSolved(box))
+		Set<Box> availableBoxes = cellModel.getBoxes().stream()
+				.filter(box -> !cellModel.isSolved(box))
 				.collect(Collectors.toSet());
 		
-		Set<Goal> unsolvedGoals = model.getGoals().stream()
-				.filter(goal -> !model.isSolved(goal))
+		Set<Goal> unsolvedGoals = cellModel.getGoals().stream()
+				.filter(goal -> !cellModel.isSolved(goal))
 				.collect(Collectors.toSet());
 		
 		for (Goal goal : unsolvedGoals)
 		{			
-			Location boxLoc = BoxSearch.search(availableBoxes, goal.getLetter(), goal.getLocation(), model);
-			
-			Box box = model.getBox(boxLoc);
+			Location boxLoc = BoxSearch.search(availableBoxes, goal.getLetter(), goal.getLocation(), cellModel, cellModel.getGridOperations());
+			Box box = cellModel.getBox(boxLoc);
 
 			if (box != null && availableBoxes.remove(box))
 			{
@@ -70,25 +66,23 @@ public class Preprocessor {
 		}
 	}
 	
-	private static void matchAgentsAndBoxes()
+	private  void matchAgentsAndBoxes()
 	{
-		Set<Box> boxes = model.getGoals().stream()
+		Set<Box> boxes = cellModel.getGoals().stream()
 							.map(goal -> goal.getBox())
 							.collect(Collectors.toSet());
 		
-		if (model.getAgents().length == 1)
+		if (cellModel.getAgents().length == 1)
 		{
-			Agent agent = model.getAgent(0);
-			
+			Agent agent = cellModel.getAgent(0);
 			boxes.stream().forEach(box -> box.setAgent(agent));
 		}
 		else
 		{
 			for (Box box : boxes)
 			{			
-				Location agLoc = AgentSearch.search(box.getColor(), box.getLocation(), model);
-				
-				Agent agent = model.getAgent(agLoc);
+				Location agLoc = AgentSearch.search(box.getColor(), box.getLocation(), cellModel, cellModel.getGridOperations());
+				Agent agent = cellModel.getAgent(agLoc);
 				
 				if (agent != null)
 				{
@@ -99,23 +93,21 @@ public class Preprocessor {
 		}		
 	}
 	
-	private static void matchAgentsAndGoals(List<Goal> goals)
+	private  void matchAgentsAndGoals(List<Goal> goals)
 	{
 		for (Goal goal : goals)
 		{
 			Agent agent = goal.getBox().getAgent();
-			
 			agent.addGoal(goal);
 		}
 	}
 
-	private static List<Goal> prioritizeGoals() 
+	private  List<Goal> prioritizeGoals()
 	{
 		Map<Goal, Set<SimpleEntry<Goal, Boolean>>> dependencies = new HashMap<>();
-		
-		for (Goal goal : model.getGoals())
+		for (Goal goal : cellModel.getGoals())
 		{
-			if (model.isSolved(goal)) continue;
+			if (cellModel.isSolved(goal)) continue;
 			
 			if (!dependencies.containsKey(goal))
 			{
@@ -125,44 +117,44 @@ public class Preprocessor {
 			Box box 	= goal.getBox();
 			Agent agent 	= box.getAgent();
 
-	        DependencySearch.search(goal.getLocation(), box.getLocation(), GridOperations.GOAL, model)
+	        DependencySearch.search(goal.getLocation(), box.getLocation(), GridOperations.GOAL, cellModel, cellModel.getGridOperations())
 	        	.stream().forEach(loc -> addDependency(dependencies, loc, goal, true));
 	        
-	        DependencySearch.search(box.getLocation(), agent.getLocation(), GridOperations.BOX | GridOperations.GOAL, model)
+	        DependencySearch.search(box.getLocation(), agent.getLocation(), GridOperations.BOX | GridOperations.GOAL, cellModel, cellModel.getGridOperations())
 		        .stream().forEach(loc -> addDependency(dependencies, loc, goal, false));
 		}
 		
 		return dependencies.entrySet().stream()
 				.sorted(comparator)
-				.map(e -> e.getKey())
+				.map(Entry::getKey)
 				.collect(Collectors.toList());
 	}
 	
-	private static void addDependency(Map<Goal, Set<SimpleEntry<Goal, Boolean>>> dependencies, Location l, Goal goal, boolean isGoalToBox)
+	private  void addDependency(Map<Goal, Set<SimpleEntry<Goal, Boolean>>> dependencies, Location l, Goal goal, boolean isGoalToBox)
 	{
 		SimpleEntry<Goal, Boolean> entry = new SimpleEntry<>(goal, isGoalToBox);
 		
-    	if (model.hasObject(GridOperations.GOAL, l))
+    	if (cellModel.hasObject(GridOperations.GOAL, l))
     	{
-    		MapUtil.addToMap(dependencies, model.getGoal(l), entry);
+    		MapUtil.addToMap(dependencies, cellModel.getGoal(l), entry);
     	}
     	else
     	{
-    		Goal otherGoal = model.getBox(l).getGoal();
+    		Goal otherGoal = cellModel.getBox(l).getGoal();
     		if (otherGoal != null)
     			MapUtil.addToMap(dependencies, otherGoal, entry);
     	}
 	}
 	
-	private static Comparator<Entry<Goal, Set<SimpleEntry<Goal, Boolean>>>> comparator 
+	private  Comparator<Entry<Goal, Set<SimpleEntry<Goal, Boolean>>>> comparator
 		= new Comparator<Entry<Goal,Set<SimpleEntry<Goal, Boolean>>>>() {
 
 		@Override
 		public int compare(	Entry<Goal, Set<SimpleEntry<Goal, Boolean>>> o1, 
 							Entry<Goal, Set<SimpleEntry<Goal, Boolean>>> o2) 
 		{
-			int size1 = Math.toIntExact(o1.getValue().stream().filter(e -> e.getValue()).count());
-			int size2 = Math.toIntExact(o2.getValue().stream().filter(e -> e.getValue()).count());
+			int size1 = Math.toIntExact(o1.getValue().stream().filter(SimpleEntry::getValue).count());
+			int size2 = Math.toIntExact(o2.getValue().stream().filter(SimpleEntry::getValue).count());
 			
 			// Sort by goal to box dependency count
 			if (size1 != size2)

@@ -1,5 +1,6 @@
 package srch;
 
+import env.model.GridOperations;
 import logging.LoggerFactory;
 
 import java.util.logging.Level;
@@ -20,7 +21,7 @@ public abstract class Search {
 		strategy = s;
 	}
 	
-	public <T> T search(Node initial)
+	public <T> T search(Node initial, GridOperations gridOperationsss)
 	{
 		strategy.addToFrontier(initial);
 		
@@ -38,7 +39,7 @@ public abstract class Search {
 			
 			strategy.addToExplored(leaf);
 			
-			for (Node n : leaf.getExpandedNodes())
+			for (Node n : leaf.getExpandedNodes(gridOperationsss))
 			{
 				if (!strategy.isExplored(n) && !strategy.inFrontier(n))
 				{
@@ -52,4 +53,8 @@ public abstract class Search {
 	}
 	
 	public abstract boolean isGoalState(Node n);
+
+
+
+
 }

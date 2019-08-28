@@ -3,7 +3,7 @@ package srch.searches.closest;
 import env.model.CellModel;
 import env.model.GridOperations;
 import env.model.OverlayModel;
-import env.model.WorldModel;
+import env.model.WorldFactory;
 import level.Location;
 import level.cell.Agent;
 import srch.Evaluation.AStar;
@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 
 public class StorageSearch extends Search implements Heuristic {
 	
-	public static Location search(Location from, Agent agent, boolean selfHelp, boolean isAgent, OverlayModel overlay, CellModel model)
+	public static Location search(Location from, Agent agent, boolean selfHelp, boolean isAgent, OverlayModel overlay, CellModel model,int freeCells,GridOperations gridOperations)
 	{
 		List<Predicate<StorageNode>> predicates = new ArrayList<>(Arrays.asList(
 				hasNoDependencies(hasXFreeAdjacent(1)),
@@ -41,18 +41,19 @@ public class StorageSearch extends Search implements Heuristic {
 		
 		if (isAgent)
 		{
-			storage = new StorageSearch(selfHelp, overlay, n -> true).search(new StorageNode(from, agent, model));
+			storage = new StorageSearch(selfHelp, overlay, n -> true).search(new StorageNode(from, agent, model),gridOperations);
 		}		
-		else if (WorldModel.getInstance().getFreeCellCount() > 50)
+		//else if (WorldFactory.getInstance().getFreeCellCount() > 50)
+		else if (freeCells > 50)
 		{
-			storage = new StorageSearch(selfHelp, overlay, hasNoDependencies(isXParentFree(overlay, 1))).search(new StorageNode(from, agent, model));
+			storage = new StorageSearch(selfHelp, overlay, hasNoDependencies(isXParentFree(overlay, 1))).search(new StorageNode(from, agent, model),gridOperations);
 		}
 		
 		for (int i = 0; i < predicates.size() && storage == null; i++)
 		{
-			storage = new StorageSearch(selfHelp, overlay, predicates.get(i)).search(new StorageNode(from, agent, model));
+			storage = new StorageSearch(selfHelp, overlay, predicates.get(i)).search(new StorageNode(from, agent, model),gridOperations);
 		}
-		
+
 		return storage;
 	}
 	
@@ -80,7 +81,7 @@ public class StorageSearch extends Search implements Heuristic {
 		
 		if (selfHelp && !canTurn) return false;
 		
-		return overlay.isFree(loc) && model.isFree(loc) && goalPredicate.test((StorageNode) n);
+		return overlay.getGridOperations().isFree(loc) && model.isFree(loc) && goalPredicate.test((StorageNode) n);
 	}
 
 	@Override
@@ -136,7 +137,7 @@ public class StorageSearch extends Search implements Heuristic {
 				parent = (StorageNode) parent.getParent();
 			}
 			
-			return overlay.isFree(parent.getLocation());
+			return overlay.getGridOperations().isFree(parent.getLocation());
 		};
 	}
 }

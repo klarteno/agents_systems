@@ -1,6 +1,7 @@
 package srch.nodes;
 
-import env.model.WorldModel;
+import env.model.GridOperations;
+import env.model.WorldFactory;
 import level.Direction;
 import level.Location;
 import srch.Node;
@@ -35,15 +36,16 @@ public class LocationNode extends Node implements IDirectionNode {
 	}
 
 	@Override
-	public List<Node> getExpandedNodes()
+	public List<Node> getExpandedNodes(GridOperations gridOperations)
 	{
 		List<Node> expandedNodes = new ArrayList<Node>(Direction.EVERY.length);
 		
 		for (Direction dir : Direction.EVERY)
 		{
 			Location loc = this.getLocation().newLocation(dir);
-			
-			if (WorldModel.getInstance().isFree(this.getObject(), loc))
+
+			//if (WorldFactory.getInstance().getCellModel().getGridOperations().isFree(this.getObject(), loc))
+			if (gridOperations.isFree(this.getObject(), loc))
 			{
 				expandedNodes.add(new LocationNode(this, dir, loc));
 			}

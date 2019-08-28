@@ -3,32 +3,30 @@ package env;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import env.model.CellModel;
-import env.model.WorldModel;
+import env.model.WorldFactory;
 import env.planner.Planner;
 import level.action.Action;
 import level.action.SkipAction;
 import level.cell.Agent;
+import level.cell.Cell;
 import logging.LoggerFactory;
 
 import java.io.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
-
+import java.util.stream.Collectors;
 
 public class WorldEnv extends ServerEnv {
 
     private static final Logger logger = LoggerFactory.getLogger(WorldEnv.class.getName());
 	
-    private CellModel model;    
-    private static WorldEnv instance;
+    private CellModel cellModel;
     private Planner planner;
     
     public WorldEnv()
     {
     	super();
-    	
-		instance = this;
 
 		try 
 		{
@@ -39,10 +37,13 @@ public class WorldEnv extends ServerEnv {
 			//WorldEnv.writeGridObject(inputGridData);
 			InputGridData inputGridData= WorldEnv.readGridObject(Optional.of("MAYSoSirius.tmp"));
 
-			model = new WorldModel(inputGridData);
-			
-			planner = new Planner();
-			
+			cellModel = new CellModel(inputGridData.width, inputGridData.height, inputGridData.nbAgs);
+			cellModel.setGoalLocations(cellModel.getGoals().stream().map(Cell::getLocation)
+					.collect(Collectors.toSet()));
+
+			WorldFactory worldModel = new WorldFactory(inputGridData, cellModel);
+
+			planner = new Planner(worldModel);
 			planner.plan();
 		} 
 		catch (Exception e) 
@@ -60,7 +61,7 @@ public class WorldEnv extends ServerEnv {
     	int finalStep = getSolutionLength();
     	
     	// Append skip actions to incomplete action lists
-    	for (Agent agent : model.getAgents())
+    	for (Agent agent : cellModel.getAgents())
     	{
     		List<Action> actions = planner.getActions().get(agent.getNumber());
     		
@@ -84,18 +85,13 @@ public class WorldEnv extends ServerEnv {
 			sendJointActionToConsole(jointAction);
     	}
     }
-    
-    public static WorldEnv getInstance() {
-    	return instance;
-    }
-
 
 
 	public static void writeGridObject(InputGridData inputGridData,Optional<String> file) throws IOException {
 		FileOutputStream fileOutputStream = null;
 		ObjectOutputStream objectOutputStream = null;
 
-		String fileName = file.isPresent() ? file.get() : "grid_data.tmp";
+		String fileName = file.orElse("grid_data.tmp");
 
 		try
 		{
@@ -124,8 +120,8 @@ public class WorldEnv extends ServerEnv {
 
 	}
 
-	public static InputGridData readGridObject(Optional<String> file) throws IOException, ClassNotFoundException {
-		String fileName = file.isPresent() ? file.get() : "grid_data.tmp";
+	private static InputGridData readGridObject(Optional<String> file) throws IOException, ClassNotFoundException {
+		String fileName = file.orElse("grid_data.tmp");
 
     	FileInputStream fileInputStream = null;
 		ObjectInputStream objectInputStream = null;
