@@ -37,14 +37,14 @@ public class Preprocessor {
 		this.agentSearch = new AgentSearch(this.cellModel);
 		this.boxSearch =  new BoxSearch(this.cellModel);
 
-		long startTime = System.nanoTime();
+		//long startTime = System.nanoTime();
 		
 		matchBoxesAndGoals();
 		matchAgentsAndBoxes();
 		List<Goal> goals = prioritizeGoals();
 		matchAgentsAndGoals(goals);
 		
-		logger.info("Preprocessing done: " + ((System.nanoTime() - startTime) / 1000000000.0));
+		//logger.info("Preprocessing done: " + ((System.nanoTime() - startTime) / 1000000000.0));
 		
 		return goals;
 	}

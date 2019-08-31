@@ -13,18 +13,13 @@
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/env/WorldEnv.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/env/WorldEnv.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/env/model/SimulationModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/env/model/SimulationModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/env/model/WorldFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/env/model/WorldFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/env/planner/Executor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/env/planner/Executor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/env/planner/Planner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/env/planner/Planner.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/env/planner/Preprocessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/env/planner/Preprocessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/srch/Search.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/Search.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/srch/interfaces/Getter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/interfaces/Getter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/srch/nodes/ClosestNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/nodes/ClosestNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/srch/nodes/DependencyNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/nodes/DependencyNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/srch/nodes/DependencyPathNode3.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/srch/nodes/DistanceNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/nodes/DistanceNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/srch/nodes/LocationNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/nodes/LocationNode.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/srch/nodes/StorageNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/nodes/StorageNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/srch/searches/closest/AgentSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/searches/closest/AgentSearch.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/srch/searches/closest/BoxSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/searches/closest/BoxSearch.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/srch/searches/closest/ClosestSearch.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/srch/searches/closest/StorageSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/searches/closest/StorageSearch.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -151,7 +146,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.agents_systems [jar]">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="mas.Main" />
       <module name="agents_systems.main" />
@@ -266,7 +261,7 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="327a54db-1cf3-45b2-a869-44f313b7ca90" name="Default Changelist" comment="" />
+      <changelist id="91dbbb4f-aa69-4d3c-bafd-c8b04e9b03d6" name="Default Changelist" comment="" />
       <created>1566070947349</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />

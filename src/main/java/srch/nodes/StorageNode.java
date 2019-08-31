@@ -15,7 +15,6 @@ public class StorageNode extends Node {
 	private Agent 	agent;
 	private int		agNumber;
 
-	private Direction direction;
 	private GridOperations gridOperations;
 
 	public StorageNode(Location initial, Agent agent, GridOperations gridOperations) {
@@ -28,8 +27,6 @@ public class StorageNode extends Node {
 
 	private StorageNode(Node parentNode, Direction direction, Location location) {
 		super(parentNode, location);
-
-		this.direction 	= direction;
 
 		StorageNode p = (StorageNode) parentNode;
 		this.gridOperations 		= p.gridOperations;

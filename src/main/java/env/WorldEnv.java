@@ -37,7 +37,7 @@ public class WorldEnv extends ServerEnv {
 			//InputGridData inputGridData = new InputGridData(resultParsed.height,resultParsed.width,resultParsed.nbAgs,resultParsed.data,resultParsed.colors);
 			//WorldEnv.writeGridObject(inputGridData);
 
-			InputGridData inputGridData= WorldEnv.readGridObject(Optional.of("MAYSoSirius.tmp"));
+			InputGridData inputGridData = WorldEnv.readGridObject(Optional.of("MAYSoSirius.tmp"));
 
 			cellModel = new CellModel(inputGridData.width, inputGridData.height, inputGridData.nbAgs);
 			cellModel.setGoalLocations(cellModel.getGoals().stream().map(Cell::getLocation)

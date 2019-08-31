@@ -41,8 +41,10 @@ public class SimulationModel {
 		SimulationModel.this.agent			= new Agent(agent);
 		SimulationModel.this.tracked  		= new Cell(tracked);
 		SimulationModel.this.isAgent 		= isAgent;
-    	
-		for (Agent otherAgent : WorldFactory.getInstance().getCellModel().getAgents())
+
+		CellModel cellModel = SimulationModel.planner.getWorldProxy().getCellModel();
+
+		for (Agent otherAgent : cellModel.getAgents())
 		{
 			List<Action> actionList = planner.getActions().get(otherAgent.getNumber());
 			

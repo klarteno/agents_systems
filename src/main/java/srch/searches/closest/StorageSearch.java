@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 
 public class StorageSearch extends Search implements Heuristic {
 	
-	public static Location search(Location from, Agent agent, boolean selfHelp, boolean isAgent, OverlayModel overlay, CellModel model,int freeCells,GridOperations gridOperations)
+	public  Location search(Location from, Agent agent, boolean selfHelp, boolean isAgent, OverlayModel overlay, CellModel model,int freeCells,GridOperations gridOperations)
 	{
 		List<Predicate<StorageNode>> predicates = new ArrayList<>(Arrays.asList(
 				hasNoDependencies(hasXFreeAdjacent(1)),
@@ -41,7 +41,7 @@ public class StorageSearch extends Search implements Heuristic {
 		
 		if (isAgent)
 		{
-			storage = new StorageSearch(selfHelp, overlay, n -> true).search(new StorageNode(from, agent, model.getGridOperations()),gridOperations);
+			storage = new StorageSearch(selfHelp, overlay, n -> true).search(new StorageNode(from, agent,gridOperations),gridOperations);
 		}		
 		else if (freeCells > 50)
 		{
@@ -60,7 +60,7 @@ public class StorageSearch extends Search implements Heuristic {
 	private OverlayModel overlay;
 	private Predicate<StorageNode> goalPredicate;
 	
-	public StorageSearch(boolean selfHelp, OverlayModel overlay, Predicate<StorageNode> goalPredicate)
+	private StorageSearch(boolean selfHelp, OverlayModel overlay, Predicate<StorageNode> goalPredicate)
 	{
 		super();
 		
@@ -71,37 +71,41 @@ public class StorageSearch extends Search implements Heuristic {
 		this.goalPredicate = goalPredicate;
 	}
 
+	public StorageSearch()
+	{
+		super();
+	}
+
+
 	@Override
 	public boolean isGoalState(Node n)
 	{
-		GridOperations model = ((StorageNode) n).getModel();
-		
+		GridOperations gridOperations  = ((StorageNode) n).getModel();
 		Location loc = n.getLocation();
-		
 		if (selfHelp && !canTurn) return false;
 		
-		return overlay.getGridOperations().isFree(loc) && model.isFree(loc) && goalPredicate.test((StorageNode) n);
+		return overlay.getGridOperations().isFree(loc) && gridOperations.isFree(loc) && goalPredicate.test((StorageNode) n);
 	}
 
 	@Override
 	public int h(Node n)
 	{
-		GridOperations model 	= Getter.getModel(n);
-		Location loc 	= n.getLocation();
-		int			h		= 0;
-		
+		GridOperations gridOperations = Getter.getModel(n);
+		Location loc = n.getLocation();
+		int	h= 0;
+
 		if (!canTurn && Getter.getModel(n.getParent()).isFreeAdjacent(((StorageNode) n).getAgentNumber(), n.getParent().getLocation()) >= 3)
 		{
 			canTurn = true;
 		}
 		
 		// Do not add agent or box penalty if location contains the agent itself
-		if (model.hasObject(((StorageNode) n).getAgentNumber(), GridOperations.BOX_MASK, loc))
+		if (gridOperations.hasObject(((StorageNode) n).getAgentNumber(), GridOperations.BOX_MASK, loc))
 		{
 			return h;
 		}
 		
-		h += model.hasObject(GridOperations.AGENT | GridOperations.BOX | GridOperations.GOAL, loc) ? 100 : 0;
+		h += gridOperations.hasObject(GridOperations.AGENT | GridOperations.BOX | GridOperations.GOAL, loc) ? 100 : 0;
 		
 		return h;
 	}
@@ -110,9 +114,11 @@ public class StorageSearch extends Search implements Heuristic {
 	private static Predicate<StorageNode> hasNoDependencies(Predicate<StorageNode> predicate) {
 		return n -> 
 		{
+			GridOperations gridOperations;
 			for (Node parent = n; parent.getParent() != null; parent = parent.getParent())
 			{
-				if (n.getModel().hasObject(GridOperations.AGENT | GridOperations.BOX, parent.getLocation())) return false;
+				gridOperations=n.getModel();
+				if (gridOperations.hasObject(GridOperations.AGENT | GridOperations.BOX, parent.getLocation())) return false;
 			}
 			return predicate.test(n);
 		};
@@ -125,10 +131,10 @@ public class StorageSearch extends Search implements Heuristic {
 	
 	private static Predicate<StorageNode> isXParentFree(OverlayModel overlay, int x)
 	{		
-		return n -> 
+		return parent ->
 		{
 			int count = x;
-			StorageNode parent = n;
+			//StorageNode parent = n;
 			
 			while (count > 0 && parent.getParent() != null)
 			{

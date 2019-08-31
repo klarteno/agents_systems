@@ -7,14 +7,11 @@ import level.cell.*;
 import java.util.*;
 
 public class WorldFactory {
-
 	private final CellModel cellModel;
 	private Map<Character, Set<Goal>> 	goalMap;
 	private Map<Character, Set<Box>>  	boxMap;
 	
 	private int freeCells;
-	
-	private static WorldFactory instance;
 
 	/**
 	 * Constructs a new WorldModel based on a level.
@@ -28,12 +25,6 @@ public class WorldFactory {
 		boxMap		= new HashMap<>();
 		
 		initData(level.data, level.colors);
-
-		instance = this;
-	}
-
-	public static WorldFactory getInstance() {
-		return instance;
 	}
 
 	public int getFreeCellCount() {

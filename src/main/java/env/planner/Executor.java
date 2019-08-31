@@ -40,7 +40,7 @@ public class Executor {
 	protected boolean getAgentToBox(Agent agent, Box box)
 	{
 		int initialStep = planner.getInitialStep(agent);
-		List<Action> actions = ActionSearch.search(agent, agent, box.getLocation(), 1, initialStep,planner.worlProxy.getCellModel().getGridOperations());
+		List<Action> actions = ActionSearch.search(agent, agent, box.getLocation(), 1, initialStep,planner.worldProxy.getCellModel().getGridOperations());
 
 		if (actions == null)
 		{
@@ -67,7 +67,7 @@ public class Executor {
 	{
 		int initialStep = planner.getInitialStep(agent);
 		
-		List<Action> actions = ActionSearch.search(agent, tracked, location, 0, initialStep,planner.worlProxy.getCellModel().getGridOperations());
+		List<Action> actions = ActionSearch.search(agent, tracked, location, 0, initialStep,planner.worldProxy.getCellModel().getGridOperations());
 
 		if (actions == null)
 		{

@@ -14,10 +14,7 @@ import srch.searches.DistanceSearch;
 import srch.searches.closest.AgentSearch;
 import srch.searches.closest.StorageSearch;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,19 +23,18 @@ public class Planner {
 	private static final Logger logger = LoggerFactory.getLogger(Planner.class.getName());
 
 	private static Planner instance;
-	Preprocessor preprocessor;
+	private Preprocessor preprocessor;
 
 	private ArrayList<CellModel> 	dataModels;
 	private ArrayList<List<Action>> actions;
 	
 	private Executor executor;
-	WorldFactory worlProxy;
-	DependencyPath dependencyPath;
-	private AgentSearch agentSearch;
-
+	WorldFactory worldProxy;
+	private DependencyPath dependencyPath;
+	private StorageSearch storageSearch;
 
 	public Planner(WorldFactory worlProxy) {
-		this.worlProxy = worlProxy;
+		this.worldProxy = worlProxy;
 	}
 
 	public static Planner getInstance() {
@@ -48,7 +44,10 @@ public class Planner {
 	public int dataModelCount() {
 		return dataModels.size();
 	}
-	
+
+	public WorldFactory getWorldProxy(){
+		return this.worldProxy;
+	}
 	/**
 	 * Find a solution to the level
 	 */
@@ -63,18 +62,18 @@ public class Planner {
 		executor = new Executor(this);
 		preprocessor = new Preprocessor();
 		dependencyPath = new DependencyPath();
+		storageSearch = new StorageSearch();
 
-
-		dataModels = new ArrayList<CellModel>(Arrays.asList(new CellModel(worlProxy.getCellModel())));
+		dataModels = new ArrayList<CellModel>(Arrays.asList(new CellModel(worldProxy.getCellModel())));
 		
-		actions = new ArrayList<List<Action>>(worlProxy.getCellModel().getNbAgs());
+		actions = new ArrayList<List<Action>>(worldProxy.getCellModel().getNbAgs());
 		
-		for (int i = 0; i < worlProxy.getCellModel().getNbAgs(); i++)
+		for (int i = 0; i < worldProxy.getCellModel().getNbAgs(); i++)
 		{
 			actions.add(new ArrayList<Action>());
 		}
 		
-		solveLevel(preprocessor.preprocess(worlProxy.getCellModel()));
+		solveLevel(preprocessor.preprocess(worldProxy.getCellModel()));
 	}
 	
 	private void solveLevel(List<Goal> goals)
@@ -85,22 +84,22 @@ public class Planner {
 			{
 				solveGoal(goal);
 			}
-			goals = preprocessor.preprocess(getModel(getLastStep()));
+			int lastStep = getLastStep();
+			goals = preprocessor.preprocess(getModel(lastStep));
 		}
-
 	}
 	
 	private void solveGoal(Goal goal)
 	{		
-		Box box		= goal.getBox();
+		Box box			= goal.getBox();
 		Agent agent 	= box.getAgent();
 		Location loc 	= goal.getLocation();
 		
 		// Agent will peek at the next goal to solve
 		agent.removeGoal(goal);
 
-		planAgentToBox(agent, box, new OverlayModel(worlProxy.getCellModel().getGridOperations()));
-		planObjectToLocation(agent, box, loc, new OverlayModel(worlProxy.getCellModel().getGridOperations()));
+		planAgentToBox(agent, box, new OverlayModel(worldProxy.getCellModel().getGridOperations()));
+		planObjectToLocation(agent, box, loc, new OverlayModel(worldProxy.getCellModel().getGridOperations()));
 	}
 
 	private boolean planAgentToBox(Agent agent, Box box, OverlayModel previousOverlay)
@@ -110,15 +109,14 @@ public class Planner {
 
 		int				step			= getInitialStep(agent);
 		CellModel 		model 			= getModel(step);
-		DependencyPath 	dependencyPath 	= this.dependencyPath.getDependencyPath(agent, box, step,worlProxy.getCellModel().getGridOperations());
-
-		OverlayModel overlay			= new OverlayModel(previousOverlay, worlProxy.getCellModel().getGridOperations());
+		DependencyPath 	dependencyPath 	= this.dependencyPath.getDependencyPath(agent, box, step, worldProxy.getCellModel().getGridOperations());
+		OverlayModel overlay			= new OverlayModel(previousOverlay, worldProxy.getCellModel().getGridOperations());
 
 		// Add overlay for getting box to goal
 		if (box.getGoal() != null)
 		{
 			Map<Location, Integer> result = new DistanceSearch(box.getGoal().getLocation(), 0)
-					.search(new DistanceNode(box.getLocation()),worlProxy.getCellModel().getGridOperations());
+					.search(new DistanceNode(box.getLocation()), worldProxy.getCellModel().getGridOperations());
 
 			overlay.addOverlay(result.keySet());
 
@@ -156,8 +154,8 @@ public class Planner {
 	{
 		int				step			= getInitialStep(agent);
 		CellModel 		model 			= getModel(step);
-		DependencyPath 	dependencyPath 	= this.dependencyPath.getDependencyPath(agent, tracked, loc, step,worlProxy.getCellModel().getGridOperations());
-		OverlayModel overlay			= new OverlayModel(previousOverlay, worlProxy.getCellModel().getGridOperations());
+		DependencyPath 	dependencyPath 	= this.dependencyPath.getDependencyPath(agent, tracked, loc, step, worldProxy.getCellModel().getGridOperations());
+		OverlayModel overlay			= new OverlayModel(previousOverlay, worldProxy.getCellModel().getGridOperations());
 		
 		overlay.addOverlay(dependencyPath.getPath());
 
@@ -206,7 +204,7 @@ public class Planner {
 			Box box 	= model.getBox(dependency);
 			//Agent agent 	= model.getAgent(AgentSearch.search(box.getColor(), box.getLocation(), model,worlProxy.getCellModel().getGridOperations()));
 
-			this.agentSearch = new AgentSearch(model);
+			AgentSearch agentSearch = new AgentSearch(model);
 
 
 			Agent agent 	= model.getAgent(agentSearch.search(box.getColor(), box.getLocation()));
@@ -226,14 +224,12 @@ public class Planner {
 	private int solveAgentToBoxDependency(Agent toHelp, Agent agent, Box box, OverlayModel overlay)
 	{
 		int agentStep = getInitialStep(agent);
-		
 		if (agentStep > getInitialStep(toHelp))
 		{
 			return agentStep;
 		}
 		
 		planAgentToBox(agent, box, overlay);
-		
 		if (toHelp.equals(agent)) overlay.removeOverlay();
 		
 		return solveObjectToLocationDependency(toHelp, agent, box, overlay);
@@ -242,7 +238,6 @@ public class Planner {
 	private int solveObjectToLocationDependency(Agent toHelp, Agent agent, Cell tracked, OverlayModel overlay)
 	{
 		int agentStep = getInitialStep(agent);
-		
 		if (agentStep > getInitialStep(toHelp))
 		{
 			return agentStep;
@@ -252,15 +247,14 @@ public class Planner {
 		
 		Location storage = null;
 		boolean isAgent = tracked instanceof Agent;
-		
 		if (toHelp.equals(agent))
 		{
-			storage = StorageSearch.search(tracked.getLocation(), agent, true, isAgent, overlay, model, worlProxy.getFreeCellCount(),worlProxy.getCellModel().getGridOperations());
+			storage = storageSearch.search(tracked.getLocation(), agent, true, isAgent, overlay, model, worldProxy.getFreeCellCount(), worldProxy.getCellModel().getGridOperations());
 		}
 
 		if (storage == null)
 		{
-			storage = StorageSearch.search(tracked.getLocation(), agent, false, isAgent, overlay, model, worlProxy.getFreeCellCount(),worlProxy.getCellModel().getGridOperations());
+			storage = storageSearch.search(tracked.getLocation(), agent, false, isAgent, overlay, model, worldProxy.getFreeCellCount(), worldProxy.getCellModel().getGridOperations());
 		}		
 		
 		if (storage == null)
@@ -293,7 +287,6 @@ public class Planner {
 		if (hasModel(step))
 		{
 			CellModel model = getModel(step);
-			
 			Agent agent = model.getAgent(action.getNewAgentLocation());
 			
 			if (agent != null && step < actions.get(agent.getNumber()).size())
@@ -372,7 +365,10 @@ public class Planner {
 	 */
 	public int getLastStep()
 	{
-		return actions.stream().max((a, b) -> a.size() - b.size()).get().size();
+		//or min of actions
+		//Optional<List<Action>> action = actions.stream().max((a, b) -> a.size() - b.size());
+		Optional<List<Action>> action = actions.stream().max(Comparator.comparingInt(List::size));
+		return action.map(List::size).orElse(0);
 	}
 }
 
