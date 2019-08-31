@@ -34,6 +34,9 @@ public class Planner {
 	private Executor executor;
 	WorldFactory worlProxy;
 	DependencyPath dependencyPath;
+	private AgentSearch agentSearch;
+
+
 	public Planner(WorldFactory worlProxy) {
 		this.worlProxy = worlProxy;
 	}
@@ -201,8 +204,14 @@ public class Planner {
 		if (model.hasObject(GridOperations.BOX, dependency))
 		{
 			Box box 	= model.getBox(dependency);
-			Agent agent 	= model.getAgent(AgentSearch.search(box.getColor(), box.getLocation(), model,worlProxy.getCellModel().getGridOperations()));
-			
+			//Agent agent 	= model.getAgent(AgentSearch.search(box.getColor(), box.getLocation(), model,worlProxy.getCellModel().getGridOperations()));
+
+			this.agentSearch = new AgentSearch(model);
+
+
+			Agent agent 	= model.getAgent(agentSearch.search(box.getColor(), box.getLocation()));
+
+
 			return solveAgentToBoxDependency(toHelp, agent, box, overlay);
 		}
 		else if (model.hasObject(GridOperations.AGENT, dependency))

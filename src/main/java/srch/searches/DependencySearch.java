@@ -14,25 +14,30 @@ import java.util.List;
 
 public class DependencySearch extends Search implements Heuristic {
 
+	private CellModel cellModel;
+	
+	private Location goalLocation;
+
+	public DependencySearch(CellModel cellModel)
+	{
+		this.cellModel = cellModel;
+		this.setStrategy(new BestFirst(new AStar(this)));
+	}
+
 	/**
-	 * 
+	 *
 	 * @param from
 	 * @param to
 	 * @param object
 	 * @return
 	 */
-	public static List<Location> search(Location from, Location to, int object, CellModel model, GridOperations gridOperations)
-	{
-		return new DependencySearch(to).search(new DependencyNode(from, object, model),gridOperations);
-	}
-	
-	private Location goalLocation;
-	
-	public DependencySearch(Location to)
+	public List<Location> search(Location from, Location to, int object)
 	{
 		this.setStrategy(new BestFirst(new AStar(this)));
-		
+
 		goalLocation = to;
+
+		return search(new DependencyNode(from, object, cellModel),cellModel.getGridOperations());
 	}
 
 	@Override

@@ -24,11 +24,16 @@ public class Preprocessor {
 	
 	private  CellModel cellModel;
 
+	private  DependencySearch dependencySearch;
+	private AgentSearch agentSearch;
+
 	public Preprocessor() {}
 	
-	public  List<Goal> preprocess(CellModel model)
+	public  List<Goal> preprocess(CellModel newCellModel)
 	{		
-		this.cellModel = model;
+		this.cellModel = newCellModel;
+		dependencySearch = new DependencySearch(this.cellModel);
+		this.agentSearch = new AgentSearch(this.cellModel);
 
 		long startTime = System.nanoTime();
 		
@@ -69,7 +74,7 @@ public class Preprocessor {
 	private  void matchAgentsAndBoxes()
 	{
 		Set<Box> boxes = cellModel.getGoals().stream()
-							.map(goal -> goal.getBox())
+							.map(Goal::getBox)
 							.collect(Collectors.toSet());
 		
 		if (cellModel.getAgents().length == 1)
@@ -81,7 +86,7 @@ public class Preprocessor {
 		{
 			for (Box box : boxes)
 			{			
-				Location agLoc = AgentSearch.search(box.getColor(), box.getLocation(), cellModel, cellModel.getGridOperations());
+				Location agLoc = agentSearch.search(box.getColor(), box.getLocation());
 				Agent agent = cellModel.getAgent(agLoc);
 				
 				if (agent != null)
@@ -117,10 +122,10 @@ public class Preprocessor {
 			Box box 	= goal.getBox();
 			Agent agent 	= box.getAgent();
 
-	        DependencySearch.search(goal.getLocation(), box.getLocation(), GridOperations.GOAL, cellModel, cellModel.getGridOperations())
+			dependencySearch.search(goal.getLocation(), box.getLocation(), GridOperations.GOAL)
 	        	.stream().forEach(loc -> addDependency(dependencies, loc, goal, true));
-	        
-	        DependencySearch.search(box.getLocation(), agent.getLocation(), GridOperations.BOX | GridOperations.GOAL, cellModel, cellModel.getGridOperations())
+
+			dependencySearch.search(box.getLocation(), agent.getLocation(), GridOperations.BOX | GridOperations.GOAL)
 		        .stream().forEach(loc -> addDependency(dependencies, loc, goal, false));
 		}
 		
@@ -147,21 +152,16 @@ public class Preprocessor {
 	}
 	
 	private  Comparator<Entry<Goal, Set<SimpleEntry<Goal, Boolean>>>> comparator
-		= new Comparator<Entry<Goal,Set<SimpleEntry<Goal, Boolean>>>>() {
-
-		@Override
-		public int compare(	Entry<Goal, Set<SimpleEntry<Goal, Boolean>>> o1, 
-							Entry<Goal, Set<SimpleEntry<Goal, Boolean>>> o2) 
-		{
+		= (o1, o2) -> {
 			int size1 = Math.toIntExact(o1.getValue().stream().filter(SimpleEntry::getValue).count());
 			int size2 = Math.toIntExact(o2.getValue().stream().filter(SimpleEntry::getValue).count());
-			
+
 			// Sort by goal to box dependency count
 			if (size1 != size2)
 			{
 				return size1 - size2;
 			}
-			
+
 			size1 = Math.toIntExact(o1.getValue().stream().filter(e -> !e.getValue()).count());
 			size2 = Math.toIntExact(o2.getValue().stream().filter(e -> !e.getValue()).count());
 
@@ -169,31 +169,30 @@ public class Preprocessor {
 			if (size1 != size2)
 			{
 				return size1 - size2;
-			}			
-			
+			}
+
 			Goal goal1 = o1.getKey();
 			Goal goal2 = o2.getKey();
-			
+
 			Box box1 = goal1.getBox();
 			Box box2 = goal2.getBox();
-			
+
 			int dist1 = box1.getLocation().distance(goal1.getLocation());
 			int dist2 = box2.getLocation().distance(goal2.getLocation());
-			
+
 			// Sort by distance between box and goal
 			if (dist1 != dist2)
 			{
 				return dist1 - dist2;
 			}
-			
+
 			Agent agent1 = box1.getAgent();
 			Agent agent2 = box2.getAgent();
-			
+
 			int agDist1 = agent1.getLocation().distance(box1.getLocation());
 			int agDist2 = agent2.getLocation().distance(box2.getLocation());
-			
+
 			// Sort by distance between agent and box
 			return agDist1 - agDist2;
-		}
-	};
+		};
 }

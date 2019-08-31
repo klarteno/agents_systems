@@ -10,12 +10,18 @@ import srch.nodes.ClosestNode;
 
 public class AgentSearch extends ClosestSearch {
 
-	public static Location search(Color color, Location from, CellModel model,GridOperations gridOperations)
-	{
-		return new AgentSearch(color).search(new ClosestNode(from, model),gridOperations);
-	}
-	
+	CellModel cellModel;
+
+
 	private Color color;
+
+	public AgentSearch(CellModel cellModel)
+	{
+		super(GridOperations.AGENT);
+
+		this.cellModel = cellModel;
+	}
+
 
 	public AgentSearch(Color color) 
 	{
@@ -23,7 +29,18 @@ public class AgentSearch extends ClosestSearch {
 		
 		this.color = color;
 	}
-	
+
+	public  Location search(Color color, Location from)
+	{/*
+		this.color = color;
+		return    (Location)search(new ClosestNode(from, cellModel),cellModel.getGridOperations());
+
+*/
+		return new AgentSearch(color).search(new ClosestNode(from, cellModel),cellModel.getGridOperations());
+	}
+
+
+
 	@Override
 	public boolean isGoalState(Node n) 
 	{
