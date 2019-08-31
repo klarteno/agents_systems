@@ -17,23 +17,31 @@ import srch.Strategy.BestFirst;
 import srch.nodes.ActionNode;
 import srch.nodes.DistanceNode;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
 public class ActionSearch extends Search implements Heuristic {
 
-	public static List<Action> search(Agent agent, Cell tracked, Location to, int proximity, int initialStep,GridOperations gridOperations)
-	{
-		return new ActionSearch(tracked.getLocation(), to, proximity,gridOperations).search(new ActionNode(agent, tracked, initialStep),gridOperations);
-	}
-	
+	private GridOperations gridOperations;
 	private Map<Location, Integer> distances;
 	private Location goalLocation;
 	private int 	 goalDistance;
-	
+
+	public List<Action> search(Agent agent, Cell tracked, Location to, int proximity, int initialStep)
+	{
+		return new ActionSearch(tracked.getLocation(), to, proximity, gridOperations).search(new ActionNode(agent, tracked, initialStep),gridOperations);
+	}
+
+	public ActionSearch(GridOperations gridOperations)
+	{
+		this.gridOperations = gridOperations;
+	}
+
 	private ActionSearch(Location from, Location to, int proximity,GridOperations gridOperations)
 	{
+		this(gridOperations);
 		distances = new DistanceSearch(to, 0)
 				.search(new DistanceNode(from),gridOperations);
 
@@ -49,9 +57,7 @@ public class ActionSearch extends Search implements Heuristic {
 	public boolean isGoalState(Node n) 
 	{
 		ActionNode node = (ActionNode) n;
-		
 		SimulationModel model = node.getSimulationModel();
-		
 		int step = model.getStep();
 		
 		if (Planner.getInstance().hasModel(step) && Planner.getInstance().getModel(step).hasObject(GridOperations.LOCKED, n.getLocation()))
@@ -68,11 +74,10 @@ public class ActionSearch extends Search implements Heuristic {
 	{
 		ActionNode node = (ActionNode) n;
 		SimulationModel model = node.getSimulationModel();
-		
-		int goalDist = 0;
-		
 		Location loc = model.getTrackedLocation();
-		
+
+		int goalDist = 0;
+
 		if (distances.containsKey(loc))
 		{
 			goalDist += distances.get(loc);
@@ -80,7 +85,7 @@ public class ActionSearch extends Search implements Heuristic {
 		else
 		{
 			// Find closest location in distance map if not present
-			Location closest = distances.keySet().stream().min((l1, l2) -> l1.distance(loc) - l2.distance(loc)).get();
+			Location closest = distances.keySet().stream().min(Comparator.comparingInt(l -> l.distance(loc))).get();
 			
 			goalDist += distances.get(closest);
 			goalDist += loc.distance(closest);
@@ -92,13 +97,12 @@ public class ActionSearch extends Search implements Heuristic {
 		}
 
 		goalDist += model.getActionModel().countUnsolvedGoals();
-		
 		Goal nextGoal = model.getAgent().peekFirst();
 		
 		if (nextGoal != null)
 		{
 			Direction nextDir = node.getAction().getAgentLocation().inDirection(nextGoal.getBox().getLocation());
-			Direction agDir = node.getAction().getAgentLocation().inDirection(node.getAction().getNewAgentLocation());
+			Direction agDir = node.getAction().getAgentLocation().inDirection(node.getAction().getNextAgentLocation());
 			
 			if (nextDir != null && agDir != null && !nextDir.hasDirection(agDir))
 			{

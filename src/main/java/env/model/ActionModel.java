@@ -1,10 +1,7 @@
 package env.model;
 
 import level.Location;
-import level.action.Action;
-import level.action.MoveAction;
-import level.action.PullAction;
-import level.action.PushAction;
+import level.action.*;
 
 import java.util.Set;
 
@@ -33,10 +30,10 @@ public class ActionModel {
 	{
         switch(action.getType())
         {
-        case MOVE: doMove((MoveAction) action); return;
-        case PUSH: doPush((PushAction) action); return;
-        case PULL: doPull((PullAction) action); return;
-		case SKIP:                              return;
+        case Move: doMove((MoveAction) action); return;
+        case Push: doPush((ActionBoxMove) action); return;
+        case Pull: doPull((ActionBoxMove) action); return;
+		case Skip:                              return;
         }
         throw new UnsupportedOperationException("Invalid action: " + action);    
 	}
@@ -44,15 +41,15 @@ public class ActionModel {
     private void doMove(MoveAction action)
     {
     	Location agLoc 	= action.getAgentLocation();
-        Location nAgLoc 	= action.getNewAgentLocation();
+        Location nAgLoc 	= action.getNextAgentLocation();
     	
         move(GridOperations.AGENT, agLoc, nAgLoc);
     }
     
-    private void doPush(PushAction action)
+    private void doPush(ActionBoxMove action)
     {
     	Location agLoc 	= action.getAgentLocation();
-    	Location nAgLoc 	= action.getNewAgentLocation();
+    	Location nAgLoc 	= action.getNextAgentLocation();
     	Location boxLoc 	= action.getBoxLocation();
     	Location nBoxLoc = action.getNewBoxLocation();
 
@@ -60,10 +57,10 @@ public class ActionModel {
         move(GridOperations.AGENT, agLoc, nAgLoc);
     }
     
-    private void doPull(PullAction action)
+    private void doPull(ActionBoxMove action)
     {
     	Location agLoc  	= action.getAgentLocation();
-    	Location nAgLoc 	= action.getNewAgentLocation();
+    	Location nAgLoc 	= action.getNextAgentLocation();
     	Location boxLoc 	= action.getBoxLocation();
     	Location nBoxLoc = action.getNewBoxLocation();
 

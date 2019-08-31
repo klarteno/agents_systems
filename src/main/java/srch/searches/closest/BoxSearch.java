@@ -5,39 +5,55 @@ import env.model.GridOperations;
 import level.Location;
 import level.cell.Box;
 import srch.Node;
+import srch.Search;
+import srch.Strategy;
+import srch.interfaces.Getter;
 import srch.nodes.ClosestNode;
 
 import java.util.Set;
 
-public class BoxSearch extends ClosestSearch {
+public class BoxSearch extends Search {
 
-	public static Location search(Set<Box> boxes, char letter, Location from, CellModel model,GridOperations gridOperations)
+
+
+	public Location search(Set<Box> boxes, char letter, Location from)
 	{
-		return new BoxSearch(boxes, letter, model).search(new ClosestNode(from, model),gridOperations);
+		return new BoxSearch(boxes, letter, cellModel).search(new ClosestNode(from, cellModel.getGridOperations()),cellModel.getGridOperations());
 	}
-	
+
+	private int objectType;
 	private Set<Box> boxes;
 	private char letter;
-	private CellModel model;
+	private CellModel cellModel;
+
+	public BoxSearch(CellModel model)
+	{
+		this.objectType = GridOperations.BOX;
+		this.setStrategy(new Strategy.BFS());
+
+
+		this.cellModel  = model;
+	}
 
 	public BoxSearch(Set<Box> boxes, char letter, CellModel model)
 	{
-		super(GridOperations.BOX);
+		this.objectType = GridOperations.BOX;
+		this.setStrategy(new Strategy.BFS());
 		
 		this.boxes 	= boxes;
 		this.letter = letter;
-		this.model  = model;
+		this.cellModel  = model;
 	}
 	
 	@Override
 	public boolean isGoalState(Node n)
 	{
-		if (!super.isGoalState(n))
+		if (!Getter.getModel(n).hasObject(objectType, n.getLocation()))
 		{
 			return false;
 		}
 		
-		Box box = model.getBox(n.getLocation());
+		Box box = cellModel.getBox(n.getLocation());
 		
 		return box.getLetter() == letter && boxes.contains(box);
 	}

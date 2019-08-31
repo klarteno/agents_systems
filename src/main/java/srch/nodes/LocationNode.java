@@ -22,7 +22,7 @@ public class LocationNode extends Node implements IDirectionNode {
 		this.direction = null;
 	}
 
-	public LocationNode(Node parent, Direction direction, Location location) 
+	private LocationNode(Node parent, Direction direction, Location location)
 	{
 		super(parent, location);
 		

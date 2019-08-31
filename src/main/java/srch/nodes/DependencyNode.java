@@ -75,7 +75,6 @@ public class DependencyNode extends Node implements IDirectionNode, IModelNode, 
 		for (Direction dir : Direction.EVERY)
 		{
 			Location loc = this.getLocation().newLocation(dir);
-			
 			if (model.getGridOperations().isFree(this.getObject(), loc))
 			{
 				expandedNodes.add(new DependencyNode(this, dir, loc));

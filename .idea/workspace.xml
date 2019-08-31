@@ -6,14 +6,26 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="327a54db-1cf3-45b2-a869-44f313b7ca90" name="Default Changelist" comment="">
+    <list default="true" id="91dbbb4f-aa69-4d3c-bafd-c8b04e9b03d6" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/serialized_data/MAYSoSirius.lvl" beforeDir="false" afterPath="$PROJECT_DIR$/serialized_data/MAYSoSirius.lvl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/env/model/ActionModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/env/model/ActionModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/env/model/CellModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/env/model/CellModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/env/model/SimulationModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/env/model/SimulationModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/env/planner/Executor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/env/planner/Executor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/env/planner/Planner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/env/planner/Planner.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/level/DependencyPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/level/DependencyPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/level/action/Action.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/level/action/Action.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/level/action/MoveAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/level/action/MoveAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/level/action/PullAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/level/action/PullAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/level/action/PushAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/level/action/PushAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/level/action/SkipAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/level/action/SkipAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/srch/nodes/ActionNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/nodes/ActionNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/srch/searches/ActionSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/searches/ActionSearch.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -109,13 +121,16 @@
     <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
     <property name="GenerateAntBuildDialog.outputFileNameProperty" value="agents_systems" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/DTU spring 2019/02285 Artificial Intelligence and Multi-Agent Systems F19/assignments/backup_report/02285-MAS" />
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
+    <key name="ExtractSuperBase.RECENT_KEYS">
+      <recent name="level.action" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="env" />
       <recent name="env.model" />
@@ -211,7 +226,7 @@
       <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="agents_systems [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="agents_systems [jar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -222,7 +237,7 @@
         </option>
         <option name="taskNames">
           <list>
-            <option value="clean" />
+            <option value="jar" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -232,11 +247,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.agents_systems [jar]" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Gradle.WorldEnvTest" />
         <item itemvalue="Gradle.agents_systems [classes]" />
         <item itemvalue="Gradle.agents_systems [build]" />
-        <item itemvalue="Gradle.agents_systems [clean]" />
       </list>
     </recent_temporary>
   </component>
@@ -254,7 +269,7 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="327a54db-1cf3-45b2-a869-44f313b7ca90" name="Default Changelist" comment="" />
+      <changelist id="91dbbb4f-aa69-4d3c-bafd-c8b04e9b03d6" name="Default Changelist" comment="" />
       <created>1566070947349</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -282,11 +297,6 @@
           <url>file://$PROJECT_DIR$/src/test/java/env/WorldEnvTest.java</url>
           <line>18</line>
           <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/env/WorldEnv.java</url>
-          <line>37</line>
-          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

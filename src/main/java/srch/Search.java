@@ -10,7 +10,7 @@ public abstract class Search {
 	
 	protected static Logger logger = LoggerFactory.getLogger(Search.class.getName());
 	
-	protected Strategy strategy;
+	private Strategy strategy;
 	
 	public Search()
 	{

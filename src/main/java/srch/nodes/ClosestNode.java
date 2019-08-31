@@ -14,31 +14,32 @@ import java.util.List;
 public class ClosestNode extends Node implements IDirectionNode, IModelNode {
 	
 	private Direction direction;
-	private CellModel model;
+	private GridOperations gridOperations;
 	
-	public ClosestNode(Location initial, CellModel model) {
-		this(initial, 0, model);
+	public ClosestNode(Location initial, GridOperations gridOperations ) {
+		this(initial, 0, gridOperations);
 	}
 	
-	private ClosestNode(Location initial, int object, CellModel model) {
+	private ClosestNode(Location initial, int object, GridOperations gridOperations) {
 		super(initial, object);
 		this.direction 	= null;
-		this.model 		= model;
+		this.gridOperations 		= gridOperations;
 	}
 
-	ClosestNode(Node parent, Direction direction, Location location) {
+	private ClosestNode(Node parent, Direction direction, Location location) {
 		super(parent, location);
 		this.direction 	= direction;
-		this.model 		= ((ClosestNode) parent).model;
+		this.gridOperations 		= ((ClosestNode) parent).gridOperations;
 	}
 
 	@Override
 	public Direction getDirection() {
 		return this.direction;
 	}
-	
+
+	@Override
 	public GridOperations getModel() {
-		return this.model.getGridOperations();
+		return this.gridOperations;
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class ClosestNode extends Node implements IDirectionNode, IModelNode {
 		{
 			Location loc = this.getLocation().newLocation(dir);
 			
-			if (model.getGridOperations().isFree(this.getObject(), loc))
+			if (this.gridOperations.isFree(this.getObject(), loc))
 			{
 				expandedNodes.add(new ClosestNode(this, dir, loc));
 			}
