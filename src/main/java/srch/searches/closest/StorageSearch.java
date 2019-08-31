@@ -43,7 +43,6 @@ public class StorageSearch extends Search implements Heuristic {
 		{
 			storage = new StorageSearch(selfHelp, overlay, n -> true).search(new StorageNode(from, agent, model),gridOperations);
 		}		
-		//else if (WorldFactory.getInstance().getFreeCellCount() > 50)
 		else if (freeCells > 50)
 		{
 			storage = new StorageSearch(selfHelp, overlay, hasNoDependencies(isXParentFree(overlay, 1))).search(new StorageNode(from, agent, model),gridOperations);

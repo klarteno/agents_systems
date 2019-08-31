@@ -15,7 +15,7 @@ import util.ModelUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DependencyPathNode extends Node implements IDirectionNode, IDependencyNode, IModelNode {
+public class DependencyPathNode3 extends Node implements IDirectionNode, IDependencyNode, IModelNode {
 
 	private int step;
 
@@ -28,7 +28,7 @@ public class DependencyPathNode extends Node implements IDirectionNode, IDepende
 	private boolean 	ignoreLast;
 	private GridOperations model;
 
-	public DependencyPathNode(Location initial, Agent agent, int dependency, boolean includeLast, int initialStep)
+	public DependencyPathNode3(Location initial, Agent agent, int dependency, boolean includeLast, int initialStep)
 	{
 		super(initial);
 
@@ -42,7 +42,7 @@ public class DependencyPathNode extends Node implements IDirectionNode, IDepende
 		this.model				= planner.getModel(initialStep).getGridOperations();
 	}
 
-	private DependencyPathNode(DependencyPathNode parent, Direction dir, Location loc)
+	private DependencyPathNode3(DependencyPathNode3 parent, Direction dir, Location loc)
 	{
 		super(parent, loc);
 
@@ -61,8 +61,8 @@ public class DependencyPathNode extends Node implements IDirectionNode, IDepende
 	}
 
 	@Override
-	public DependencyPathNode getParent() {
-		return (DependencyPathNode) super.getParent();
+	public DependencyPathNode3 getParent() {
+		return (DependencyPathNode3) super.getParent();
 	}
 
 
@@ -99,7 +99,7 @@ public class DependencyPathNode extends Node implements IDirectionNode, IDepende
 			
 			if (model.isFree(this.getObject(), loc))
 			{
-				expandedNodes.add(new DependencyPathNode(this, dir, loc));
+				expandedNodes.add(new DependencyPathNode3(this, dir, loc));
 			}
 		}
 		return expandedNodes;
@@ -125,7 +125,7 @@ public class DependencyPathNode extends Node implements IDirectionNode, IDepende
 			}
 		}			
 		
-		for (DependencyPathNode n = this; n != null; n = (DependencyPathNode) n.getParent())
+		for (DependencyPathNode3 n = this; n != null; n = (DependencyPathNode3) n.getParent())
 		{			
 			Location loc = n.getLocation();
 			
@@ -149,7 +149,7 @@ public class DependencyPathNode extends Node implements IDirectionNode, IDepende
 		return path;
 	}
 	
-	private boolean hasDependency(GridOperations model, DependencyPathNode n, int agNumber)
+	private boolean hasDependency(GridOperations model, DependencyPathNode3 n, int agNumber)
 	{
 		Location loc = n.getLocation();
 		

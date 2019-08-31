@@ -6,14 +6,17 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="327a54db-1cf3-45b2-a869-44f313b7ca90" name="Default Changelist" comment="">
+    <list default="true" id="91dbbb4f-aa69-4d3c-bafd-c8b04e9b03d6" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/env/planner/Planner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/env/planner/Planner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/level/DependencyPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/level/DependencyPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/srch/nodes/DependencyPathNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/nodes/DependencyPathNode3.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/srch/searches/DependencyPathSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/searches/DependencyPathSearch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/srch/searches/closest/StorageSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/searches/closest/StorageSearch.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

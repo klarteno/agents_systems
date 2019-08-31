@@ -1,12 +1,10 @@
 package level;
 
-import env.model.CellModel;
 import env.model.GridOperations;
 import env.planner.Planner;
 import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Cell;
-import srch.nodes.DependencyPathNode;
 import srch.searches.DependencyPathSearch;
 
 import java.util.*;
@@ -74,7 +72,6 @@ public class DependencyPath {
 	
 	public Entry<Location, Integer> getDependency(Location loc,Planner planner)
 	{
-
 		Optional<Entry<Location, Integer>> box = dependencies.entrySet().stream()
 				.filter(e -> planner.getModel(e.getValue()).hasObject(GridOperations.BOX, e.getKey()))
 				.sorted((e1, e2) -> e1.getKey().distance(loc) - e2.getKey().distance(loc))
@@ -83,7 +80,6 @@ public class DependencyPath {
 		return box.orElseGet(() -> dependencies.entrySet().stream()
 				.sorted((e1, e2) -> e1.getKey().distance(loc) - e2.getKey().distance(loc))
 				.min((e1, e2) -> e1.getValue() - e2.getValue()).get());
-
 	}
 	
 	/**
@@ -95,7 +91,9 @@ public class DependencyPath {
 	 */
 	public  DependencyPath getDependencyPath(Agent agent, Box box, int initialStep,GridOperations gridOperations)
 	{
-		return getLocationDependencyPath(agent, agent.getLocation(), box.getLocation(), true, initialStep,gridOperations);
+		return (DependencyPath)new DependencyPathSearch(box.getLocation()).
+				getDependencyPath(agent, agent.getLocation(), box.getLocation(), true, initialStep, gridOperations);
+
 	}
 	
 	/**
@@ -106,12 +104,7 @@ public class DependencyPath {
 	 */
 	public DependencyPath getDependencyPath(Agent agent, Cell tracked, Location to, int initialStep, GridOperations gridOperations)
 	{
-		return getLocationDependencyPath(agent, tracked.getLocation(), to, false, initialStep,gridOperations);
-	}
-	
-	private static DependencyPath getLocationDependencyPath(Agent agent, Location from, Location to, boolean toBox, int initialStep, GridOperations gridOperations)
-	{
-		int obj = GridOperations.BOX | GridOperations.AGENT;
-		return new DependencyPathSearch(to).search(new DependencyPathNode(from, agent, obj, toBox, initialStep),gridOperations);
+		return (DependencyPath)new DependencyPathSearch(to).
+				getDependencyPath(agent, tracked.getLocation(),  to, false, initialStep, gridOperations);
 	}
 }
