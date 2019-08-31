@@ -23,7 +23,7 @@ public class DistanceNode extends Node implements IDirectionNode {
 		this.direction = null;
 	}
 
-	public DistanceNode(Node parent, Location location, Direction direction)
+	private DistanceNode(Node parent, Location location, Direction direction)
 	{
 		super(parent, location);
 		this.direction = direction;

@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class ServerEnv {
 
-    private BufferedReader serverIn;
+    protected BufferedReader serverIn;
 	private PrintStream	serverOut;
     
 	ServerEnv()

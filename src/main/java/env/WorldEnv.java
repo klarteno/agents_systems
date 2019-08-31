@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import env.model.CellModel;
 import env.model.WorldFactory;
 import env.planner.Planner;
+import level.Level;
 import level.action.Action;
 import level.action.SkipAction;
 import level.cell.Agent;
@@ -35,6 +36,7 @@ public class WorldEnv extends ServerEnv {
 
 			//InputGridData inputGridData = new InputGridData(resultParsed.height,resultParsed.width,resultParsed.nbAgs,resultParsed.data,resultParsed.colors);
 			//WorldEnv.writeGridObject(inputGridData);
+
 			InputGridData inputGridData= WorldEnv.readGridObject(Optional.of("MAYSoSirius.tmp"));
 
 			cellModel = new CellModel(inputGridData.width, inputGridData.height, inputGridData.nbAgs);

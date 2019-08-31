@@ -41,16 +41,16 @@ public class StorageSearch extends Search implements Heuristic {
 		
 		if (isAgent)
 		{
-			storage = new StorageSearch(selfHelp, overlay, n -> true).search(new StorageNode(from, agent, model),gridOperations);
+			storage = new StorageSearch(selfHelp, overlay, n -> true).search(new StorageNode(from, agent, model.getGridOperations()),gridOperations);
 		}		
 		else if (freeCells > 50)
 		{
-			storage = new StorageSearch(selfHelp, overlay, hasNoDependencies(isXParentFree(overlay, 1))).search(new StorageNode(from, agent, model),gridOperations);
+			storage = new StorageSearch(selfHelp, overlay, hasNoDependencies(isXParentFree(overlay, 1))).search(new StorageNode(from, agent, model.getGridOperations()),gridOperations);
 		}
 		
 		for (int i = 0; i < predicates.size() && storage == null; i++)
 		{
-			storage = new StorageSearch(selfHelp, overlay, predicates.get(i)).search(new StorageNode(from, agent, model),gridOperations);
+			storage = new StorageSearch(selfHelp, overlay, predicates.get(i)).search(new StorageNode(from, agent, model.getGridOperations()),gridOperations);
 		}
 
 		return storage;

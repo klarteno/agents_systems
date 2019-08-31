@@ -13,10 +13,19 @@
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/env/planner/Planner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/env/planner/Planner.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/env/planner/Preprocessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/env/planner/Preprocessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/srch/searches/DependencySearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/searches/DependencySearch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/srch/Search.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/Search.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/srch/interfaces/Getter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/interfaces/Getter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/srch/nodes/ClosestNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/nodes/ClosestNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/srch/nodes/DependencyNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/nodes/DependencyNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/srch/nodes/DependencyPathNode3.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/srch/nodes/DistanceNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/nodes/DistanceNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/srch/nodes/LocationNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/nodes/LocationNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/srch/nodes/StorageNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/nodes/StorageNode.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/srch/searches/closest/AgentSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/searches/closest/AgentSearch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/srch/searches/closest/BoxSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/searches/closest/BoxSearch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/srch/searches/closest/ClosestSearch.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/srch/searches/closest/StorageSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/srch/searches/closest/StorageSearch.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -112,7 +121,7 @@
     <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
     <property name="GenerateAntBuildDialog.outputFileNameProperty" value="agents_systems" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/DTU spring 2019/02285 Artificial Intelligence and Multi-Agent Systems F19/assignments/backup_report/02285-MAS" />
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -142,7 +151,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="Gradle.agents_systems [jar]">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="mas.Main" />
       <module name="agents_systems.main" />
@@ -214,7 +223,7 @@
       <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="agents_systems [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="agents_systems [jar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -225,7 +234,7 @@
         </option>
         <option name="taskNames">
           <list>
-            <option value="clean" />
+            <option value="jar" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -235,11 +244,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.agents_systems [jar]" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Gradle.WorldEnvTest" />
         <item itemvalue="Gradle.agents_systems [classes]" />
         <item itemvalue="Gradle.agents_systems [build]" />
-        <item itemvalue="Gradle.agents_systems [clean]" />
       </list>
     </recent_temporary>
   </component>
@@ -285,11 +294,6 @@
           <url>file://$PROJECT_DIR$/src/test/java/env/WorldEnvTest.java</url>
           <line>18</line>
           <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/env/WorldEnv.java</url>
-          <line>37</line>
-          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

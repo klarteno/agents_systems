@@ -26,6 +26,7 @@ public class Preprocessor {
 
 	private  DependencySearch dependencySearch;
 	private AgentSearch agentSearch;
+	private BoxSearch boxSearch;
 
 	public Preprocessor() {}
 	
@@ -34,6 +35,7 @@ public class Preprocessor {
 		this.cellModel = newCellModel;
 		dependencySearch = new DependencySearch(this.cellModel);
 		this.agentSearch = new AgentSearch(this.cellModel);
+		this.boxSearch =  new BoxSearch(this.cellModel);
 
 		long startTime = System.nanoTime();
 		
@@ -59,7 +61,7 @@ public class Preprocessor {
 		
 		for (Goal goal : unsolvedGoals)
 		{			
-			Location boxLoc = BoxSearch.search(availableBoxes, goal.getLetter(), goal.getLocation(), cellModel, cellModel.getGridOperations());
+			Location boxLoc = boxSearch.search(availableBoxes, goal.getLetter(), goal.getLocation());
 			Box box = cellModel.getBox(boxLoc);
 
 			if (box != null && availableBoxes.remove(box))
