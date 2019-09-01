@@ -6,10 +6,10 @@ import env.model.CellModel;
 import env.model.WorldFactory;
 import env.planner.Planner;
 import level.Level;
+import level.Location;
 import level.action.Action;
 import level.action.SkipAction;
 import level.cell.Agent;
-import level.cell.Cell;
 import logging.LoggerFactory;
 
 import java.io.*;
@@ -36,11 +36,10 @@ public class WorldEnv extends ServerEnv {
 
 			//InputGridData inputGridData = new InputGridData(resultParsed.height,resultParsed.width,resultParsed.nbAgs,resultParsed.data,resultParsed.colors);
 			//WorldEnv.writeGridObject(inputGridData);
-
 			InputGridData inputGridData = WorldEnv.readGridObject(Optional.of("MAYSoSirius.tmp"));
 
 			cellModel = new CellModel(inputGridData.width, inputGridData.height, inputGridData.nbAgs);
-			cellModel.setGoalLocations(cellModel.getGoals().stream().map(Cell::getLocation)
+			cellModel.setGoalLocations(cellModel.getGoals().stream().map(Location::getCopyLocation)
 					.collect(Collectors.toSet()));
 
 			WorldFactory worldModel = new WorldFactory(inputGridData, cellModel);
@@ -69,7 +68,7 @@ public class WorldEnv extends ServerEnv {
     		
     		while (actions.size() < finalStep)
     		{
-    			actions.add(new SkipAction(agent.getLocation()));
+    			actions.add(new SkipAction(agent.getCopyLocation()));
     		}
     	}
     	

@@ -10,19 +10,14 @@ public abstract class Colored extends Lettered {
 	public Colored(Location location, char letter, Color color) 
 	{
 		super(location, letter);
-		
-//		this.color = Color.getColor(color == null ? "" : color);
 		this.color = color;
 	}
 	
-	public Colored(int x, int y, char letter, Color color) 
+	public Colored(int x, int y, char letter, Color color)
 	{
 		this(new Location(x, y), letter, color);
 	}
-	
-	/**
-	 * @return The color of this object
-	 */
+
 	public Color getColor()
 	{
 		return color;

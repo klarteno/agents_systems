@@ -3,6 +3,8 @@ package level.action;
 import level.Direction;
 import level.Location;
 
+import java.util.Objects;
+
 public class MoveAction extends Action {
 
 	private Direction direction;
@@ -26,9 +28,25 @@ public class MoveAction extends Action {
 	
 	@Override
 	public boolean isOpposite(Action action) {
-		return action instanceof MoveAction && Direction.isOpposite(((MoveAction) action).direction, this.direction);
+		return action.getType() == ActionType.Move
+				&& Direction.isOpposite(((MoveAction) action).direction, this.direction);
+
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+		MoveAction that = (MoveAction) o;
+		return direction == that.direction;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), direction);
+	}
+/*
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -48,4 +66,6 @@ public class MoveAction extends Action {
 		MoveAction other = (MoveAction) obj;
 		return direction == other.direction;
 	}
+
+	*/
 }

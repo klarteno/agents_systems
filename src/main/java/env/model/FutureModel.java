@@ -1,7 +1,6 @@
 package env.model;
 
 import level.Location;
-import level.action.Action;
 import level.cell.*;
 
 import java.util.HashMap;
@@ -10,39 +9,30 @@ import java.util.Map;
 public class FutureModel {
 
 	private final MyCellModel cellModel;
-	private Map<Cell, Location> originalLocations;
+	private Map<Location, Location> originalLocations;
 
 	public FutureModel(CellModel model)
 	{
 		cellModel = new MyCellModel(model);
-		
 		originalLocations = new HashMap<>();
 	}
 	
-	private void addOriginalLocation(Cell cell, Location location)
+	private void addOriginalLocation(Location cell, Location location)
 	{
-		for (Cell key : originalLocations.keySet())
+		for (Location key : originalLocations.keySet())
 		{
 			if (key == cell) return;
 		}
 		originalLocations.put(cell, location);
 	}
 	
-	public Map<Cell, Location> getOriginalLocations()
+	public Map<Location, Location> getOriginalLocations()
 	{
 		return originalLocations;
 	}
 
 	public String toString() {
 		return cellModel.toString();
-	}
-
-	public int hashCode() {
-		return cellModel.hashCode();
-	}
-
-	public boolean equals(Object obj) {
-		return cellModel.equals(obj);
 	}
 
 	public MyCellModel getCellMode(){

@@ -11,9 +11,6 @@ import srch.Heuristic;
 import srch.Node;
 import srch.Search;
 import srch.Strategy.BestFirst;
-import srch.interfaces.IDependencyNode;
-import srch.interfaces.IDirectionNode;
-import srch.interfaces.IModelNode;
 import util.ModelUtil;
 
 import java.util.ArrayList;
@@ -26,7 +23,6 @@ public class DependencyPathSearch extends Search implements Heuristic {
 	public DependencyPathSearch(Location to)
 	{
 		this.setStrategy(new BestFirst(new AStar(this)));
-		
 		goalLocation = to;
 	}
 
@@ -59,7 +55,7 @@ public class DependencyPathSearch extends Search implements Heuristic {
 
 
 
-class DependencyPathNode extends Node implements IDirectionNode, IDependencyNode, IModelNode {
+class DependencyPathNode extends Node  {
 
 	private int step;
 
@@ -92,15 +88,12 @@ class DependencyPathNode extends Node implements IDirectionNode, IDependencyNode
 
 		this.step = parent.getStep() + 1;
 
-
 		this.direction			= dir;
 		this.agent				= parent.agent;
 		this.dependency 		= parent.dependency;
 		this.dependencyCount 	= parent.dependencyCount + planner.getDependencyCount(getStep(),loc,this.dependency);;
 		this.ignoreLast			= parent.ignoreLast;
 		this.model				= parent.model;
-
-
 		//dependencyCount +=  planner.getDependencyCount(getStep(),loc,this.dependency);
 	}
 
@@ -109,19 +102,13 @@ class DependencyPathNode extends Node implements IDirectionNode, IDependencyNode
 		return (DependencyPathNode) super.getParent();
 	}
 
-
-	int getStep()
+	private int getStep()
 	{
 		return this.step;
 	}
 
-	@Override
 	public Direction getDirection() {
 		return direction;
-	}
-
-	public int getDependency() {
-		return dependency;
 	}
 
 	public int getDependencyCount() {

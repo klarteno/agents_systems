@@ -1,5 +1,7 @@
 package level;
 
+import java.util.Objects;
+
 public class Location {
 
 	public int x, y;
@@ -15,7 +17,20 @@ public class Location {
 		this.x = location.x;
 		this.y = location.y;
 	}
-	
+
+	public void setLocation(Location location)
+	{
+		this.x = location.x;
+		this.y = location.y;
+	}
+
+	public Location getCopyLocation()
+	{
+		return new Location(this.x,this.y);
+	}
+
+
+
 	public int distance(Location other)
 	{
 		return Math.abs(this.x - other.x) + Math.abs(this.y - other.y);
@@ -65,27 +80,16 @@ public class Location {
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + x;
-		result = prime * result + y;
-		return result;
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Location location = (Location) o;
+		return x == location.x &&
+				y == location.y;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Location other = (Location) obj;
-		if (x != other.x)
-			return false;
-		if (y != other.y)
-			return false;
-		return true;
+	public int hashCode() {
+		return Objects.hash(x, y);
 	}
 }

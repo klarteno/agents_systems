@@ -3,7 +3,6 @@ package srch.searches.closest;
 import env.model.CellModel;
 import env.model.GridOperations;
 import env.model.OverlayModel;
-import env.model.WorldFactory;
 import level.Location;
 import level.cell.Agent;
 import srch.Evaluation.AStar;
@@ -11,7 +10,7 @@ import srch.Heuristic;
 import srch.Node;
 import srch.Search;
 import srch.Strategy.BestFirst;
-import srch.interfaces.Getter;
+import srch.nodes.ClosestNode;
 import srch.nodes.StorageNode;
 
 import java.util.ArrayList;
@@ -90,11 +89,13 @@ public class StorageSearch extends Search implements Heuristic {
 	@Override
 	public int h(Node n)
 	{
-		GridOperations gridOperations = Getter.getModel(n);
 		Location loc = n.getLocation();
 		int	h= 0;
 
-		if (!canTurn && Getter.getModel(n.getParent()).isFreeAdjacent(((StorageNode) n).getAgentNumber(), n.getParent().getLocation()) >= 3)
+		GridOperations gridOperations = ((ClosestNode) n).getModel();
+		GridOperations gridOp = ((ClosestNode) n.getParent()).getModel();
+
+		if (!canTurn && gridOp.isFreeAdjacent(((StorageNode) n).getAgentNumber(), n.getParent().getLocation()) >= 3)
 		{
 			canTurn = true;
 		}

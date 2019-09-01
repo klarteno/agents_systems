@@ -4,12 +4,14 @@ import env.model.GridOperations;
 import level.Location;
 
 import java.util.List;
+import java.util.Objects;
 
 public abstract class Node {
 	
 	private Node parent;
 	private Location location;
-	private int object, include, g;
+	private int object;
+	private int g;
 	
 	public Node(Location initial)
 	{
@@ -26,7 +28,6 @@ public abstract class Node {
 		this.parent 	= null;
 		this.location 	= initial;
 		this.object		= object | GridOperations.WALL;
-		this.include  	= include;
 		this.g 			= 0;
 	}
 	
@@ -41,7 +42,6 @@ public abstract class Node {
 	public Node getParent() {
 		return this.parent;
 	}
-	
 	public Location getLocation() {
 		return this.location;
 	}
@@ -53,15 +53,7 @@ public abstract class Node {
 	{
 		return this.object;
 	}
-	
-	/**
-	 * @return Objects to include
-	 */
-	public int getInclude()
-	{
-		return this.include;
-	}
-	
+
 	public int getG() {
 		return this.g;
 	}
@@ -71,32 +63,21 @@ public abstract class Node {
 	public abstract <T> T extractPlan();
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((location == null) ? 0 : location.hashCode());
-		return result;
+	public String toString() {
+		return this.getLocation().toString();
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Node other = (Node) obj;
-		if (location == null) {
-			if (other.location != null)
-				return false;
-		} else if (!location.equals(other.location))
-			return false;
-		return true;
-	}	
-	
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Node node = (Node) o;
+		return object == node.object &&
+				location.equals(node.location);
+	}
+
 	@Override
-	public String toString() {
-		return this.getLocation().toString();
+	public int hashCode() {
+		return Objects.hash(location, object);
 	}
 }

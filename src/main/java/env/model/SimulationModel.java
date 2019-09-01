@@ -4,7 +4,6 @@ import env.planner.Planner;
 import level.Location;
 import level.action.*;
 import level.cell.Agent;
-import level.cell.Cell;
 
 import java.util.List;
 
@@ -16,27 +15,27 @@ public class SimulationModel {
 	private int 	currentStep, 
 					nextStep;
 	private Agent agent;
-	private Cell tracked;
+	private Location tracked;
 	private boolean isAgent;
 
-	public SimulationModel(int step, Agent agent, Cell tracked)
+	public SimulationModel(int step, Agent agent, Location tracked)
 	{
 		this(planner.getModel(step).getGridOperations(), step, agent, tracked);
 	}
 	
-	private SimulationModel(GridOperations model, int step, Agent agent, Cell tracked)
+	private SimulationModel(GridOperations model, int step, Agent agent, Location tracked)
 	{
 		this(model, step, agent, tracked, tracked instanceof Agent);
 	}
 
-	private SimulationModel(GridOperations model, int step, Agent agent, Cell tracked, boolean isAgent)
+	private SimulationModel(GridOperations model, int step, Agent agent, Location tracked, boolean isAgent)
 	{
 		actionModel = new MyActionModel(model);
 		
 		SimulationModel.this.currentStep 	= step;
 		SimulationModel.this.nextStep		= step + 1;
 		SimulationModel.this.agent			= new Agent(agent);
-		SimulationModel.this.tracked  		= new Cell(tracked);
+		SimulationModel.this.tracked  		= new Location(tracked);
 		SimulationModel.this.isAgent 		= isAgent;
 
 		CellModel cellModel = SimulationModel.planner.getWorldProxy().getCellModel();
@@ -59,7 +58,7 @@ public class SimulationModel {
 	
 	public Location getTrackedLocation()
 	{
-		return tracked.getLocation();
+		return tracked.getCopyLocation();
 	}
 	
 	public boolean isTrackedAgent()
@@ -183,7 +182,7 @@ public class SimulationModel {
 
 		public void move(int obj, Location fr, Location to)
 		{
-			if (tracked.getLocation().equals(fr))
+			if (tracked.getCopyLocation().equals(fr))
 			{
 				tracked.setLocation(to);
 			}

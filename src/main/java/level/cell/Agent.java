@@ -30,7 +30,7 @@ public class Agent extends Colored {
 	
 	public Agent(Agent agent)
 	{
-		this(new Location(agent.getLocation()), agent.getLetter(), agent.getColor(), agent.goals);
+		this(new Location(agent.getCopyLocation()), agent.getLetter(), agent.getColor(), agent.goals);
 	}
 	
 	public int getNumber() 

@@ -7,23 +7,22 @@ import level.action.Action;
 import level.action.Action.ActionType;
 import level.action.SkipAction;
 import level.cell.Agent;
-import level.cell.Cell;
 import srch.Node;
-import srch.interfaces.IActionNode;
-import srch.interfaces.IModelNode;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
-public class ActionNode extends Node implements IActionNode, IModelNode {
+
+public class ActionNode extends Node {
 
 	private Action action;
 	private SimulationModel model;
 	
-	public ActionNode(Agent agent, Cell tracked, int initialStep) 
+	public ActionNode(Agent agent, Location tracked, int initialStep)
 	{
-		super(agent.getLocation());
+		super(agent.getCopyLocation());
 
 		action 	= null;
 		model 	= new SimulationModel(initialStep, agent, tracked);
@@ -37,7 +36,6 @@ public class ActionNode extends Node implements IActionNode, IModelNode {
 		this.model 	= model;
 	}
 
-	@Override
 	public Action getAction()
 	{
 		return action;
@@ -103,37 +101,23 @@ public class ActionNode extends Node implements IActionNode, IModelNode {
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((action == null) ? 0 : action.hashCode());
-		result = prime * result + ((model == null) ? 0 : model.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ActionNode other = (ActionNode) obj;
-		if (action == null) {
-			if (other.action != null)
-				return false;
-		} else if (!action.equals(other.action))
-			return false;
-		if (model == null) {
-			return other.model == null;
-		} else return model.equals(other.model);
-	}
-	
-	@Override
 	public String toString() 
 	{
 		return this.getAction().toString() + " - " + super.toString();
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+		ActionNode that = (ActionNode) o;
+		return action.equals(that.action) &&
+				model.equals(that.model);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), action, model);
+	}
 }

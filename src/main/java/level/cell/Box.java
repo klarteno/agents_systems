@@ -26,19 +26,7 @@ public class Box extends Colored {
 	public void setGoal(Goal goal) {
 		this.goal = goal;
 	}
-	
-	/**
-	 * @return True if the box is already on a goal
 
-	public boolean onGoal()
-	{
-		Goal goal = WorldModel.getInstance().getGoal(this.getLocation());
-		if (goal != null)
-			return goal.getLetter() == this.getLetter();
-		else
-			return false;
-	}
-	 */
 	@Override
 	public String toString() {
 		return "Box: " + super.toString();

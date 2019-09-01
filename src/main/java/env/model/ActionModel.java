@@ -3,6 +3,7 @@ package env.model;
 import level.Location;
 import level.action.*;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class ActionModel {
@@ -101,11 +102,17 @@ public class ActionModel {
 		return gridOperations.toString();
 	}
 
+	@Override
 	public int hashCode() {
-		return gridOperations.hashCode();
+		return Objects.hash(gridOperations);
 	}
 
-	public boolean equals(Object obj) {
-		return gridOperations.equals(obj);
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		ActionModel that = (ActionModel) o;
+		return gridOperations.equals(that.gridOperations);
 	}
+
 }

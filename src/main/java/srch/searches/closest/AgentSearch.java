@@ -7,8 +7,6 @@ import level.Location;
 import srch.Node;
 import srch.Search;
 import srch.Strategy;
-import srch.interfaces.Getter;
-import srch.interfaces.IModelNode;
 import srch.nodes.ClosestNode;
 
 public class AgentSearch extends Search {
@@ -24,7 +22,7 @@ public class AgentSearch extends Search {
 		this.cellModel = cellModel;
 	}
 
-	public AgentSearch(Color color) 
+	private AgentSearch(Color color)
 	{
 		this.objectType = GridOperations.AGENT;
 		this.setStrategy(new Strategy.BFS());
@@ -32,18 +30,14 @@ public class AgentSearch extends Search {
 	}
 
 	public  Location search(Color color, Location from)
-	{/*
-		this.color = color;
-		return    (Location)search(new ClosestNode(from, cellModel),cellModel.getGridOperations());
-
-*/
+	{
 		return new AgentSearch(color).search(new ClosestNode(from, cellModel.getGridOperations()),cellModel.getGridOperations());
 	}
 
 	@Override
 	public boolean isGoalState(Node n) 
 	{
-		GridOperations model = Getter.getModel(n);
+		GridOperations model = 	((ClosestNode) n).getModel();
 
 	   if (!model.hasObject(objectType, n.getLocation()))
 		{

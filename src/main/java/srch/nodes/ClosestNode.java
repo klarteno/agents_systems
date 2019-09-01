@@ -1,17 +1,15 @@
 package srch.nodes;
 
-import env.model.CellModel;
 import env.model.GridOperations;
 import level.Direction;
 import level.Location;
 import srch.Node;
-import srch.interfaces.IDirectionNode;
 import srch.interfaces.IModelNode;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClosestNode extends Node implements IDirectionNode, IModelNode {
+public class ClosestNode extends Node implements IModelNode {
 	
 	private Direction direction;
 	private GridOperations gridOperations;
@@ -32,7 +30,6 @@ public class ClosestNode extends Node implements IDirectionNode, IModelNode {
 		this.gridOperations 		= ((ClosestNode) parent).gridOperations;
 	}
 
-	@Override
 	public Direction getDirection() {
 		return this.direction;
 	}
@@ -50,7 +47,6 @@ public class ClosestNode extends Node implements IDirectionNode, IModelNode {
 		for (Direction dir : Direction.EVERY)
 		{
 			Location loc = this.getLocation().newLocation(dir);
-			
 			if (this.gridOperations.isFree(this.getObject(), loc))
 			{
 				expandedNodes.add(new ClosestNode(this, dir, loc));

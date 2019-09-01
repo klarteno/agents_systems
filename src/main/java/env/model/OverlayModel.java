@@ -14,9 +14,9 @@ public class OverlayModel {
 	
 	private Stack<Collection<Location>> overlayStack;
 	
-	public OverlayModel(GridOperations gridOverlay)
+	public OverlayModel(GridOperations gridOp)
 	{
-		this.gridOperations = new MyGridOperations(gridOverlay);
+		this.gridOperations = new MyGridOperations(gridOp);
 
 		// Remove everything except walls
 		for (int x = 0; x < gridOperations.width; x++)
@@ -29,7 +29,7 @@ public class OverlayModel {
 		}		
 		overlayStack = new Stack<>();
 	}
-	
+	/*
 	public OverlayModel(OverlayModel overlay,GridOperations gridOverlay)
 	{
 		this(gridOverlay);
@@ -41,13 +41,15 @@ public class OverlayModel {
 			addOverlay(path);
 		}
 	}
-	
+	*/
+
 	public void addOverlay(Collection<Location> path)
 	{		
 		overlayObject <<= 1;
 		
-		path.stream().forEach(l -> gridOperations.add(overlayObject, l));
-		
+		//path.stream().forEach(loc -> gridOperations.add(overlayObject, loc));
+		path.forEach(loc -> gridOperations.add(overlayObject, loc));
+
 		overlayStack.push(path);
 	}
 	
@@ -55,8 +57,9 @@ public class OverlayModel {
 	{
 		if (!overlayStack.isEmpty())
 		{			
-			overlayStack.pop().stream().forEach(l -> gridOperations.remove(overlayObject, l));
-			
+			//overlayStack.pop().stream().forEach(loc -> gridOperations.remove(overlayObject, loc));
+			overlayStack.pop().forEach(loc -> gridOperations.remove(overlayObject, loc));
+
 			overlayObject >>= 1;
 		}
 	}
@@ -68,7 +71,7 @@ public class OverlayModel {
 	public String toString() {
 		return gridOperations.toString();
 	}
-
+/*
 	public int hashCode() {
 		return gridOperations.hashCode();
 	}
@@ -76,10 +79,10 @@ public class OverlayModel {
 	public boolean equals(Object obj) {
 		return gridOperations.equals(obj);
 	}
-
+*/
 	private class MyGridOperations extends GridOperations {
-		public MyGridOperations(GridOperations model) {
-			super(model);
+		public MyGridOperations(GridOperations gridOperations) {
+			super(gridOperations);
 		}
 
 		@Override

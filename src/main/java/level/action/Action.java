@@ -5,6 +5,7 @@ import level.Location;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class Action {
 
@@ -60,12 +61,12 @@ public abstract class Action {
 		for (Direction d1 : Direction.EVERY) 
 			for (Direction d2 : Direction.EVERY) 
 				if (!Direction.isOpposite(d1, d2)) 
-					actions.add(new PushAction(d1, d2, agentLocation));
+					actions.add(new ActionBoxMove(ActionType.Push, d1, d2, agentLocation));
 		
 		for (Direction d1 : Direction.EVERY) 
 			for (Direction d2 : Direction.EVERY)
 				if (d1 != d2) 
-					actions.add(new PullAction(d1, d2, agentLocation));
+					actions.add(new ActionBoxMove(ActionType.Pull,d1, d2, agentLocation));
 		
 		if (agentAction != null)
 		{
@@ -80,7 +81,23 @@ public abstract class Action {
 	
 	@Override
 	public abstract String toString();
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Action action = (Action) o;
+		return type == action.type &&
+				agentLocation.equals(action.agentLocation) &&
+				newAgentLocation.equals(action.newAgentLocation);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(type, agentLocation, newAgentLocation);
+	}
+
+	/*
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -108,4 +125,5 @@ public abstract class Action {
 			return false;
 		return true;
 	}
+	*/
 }

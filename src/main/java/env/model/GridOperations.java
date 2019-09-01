@@ -5,6 +5,7 @@ import level.Direction;
 import level.Location;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 public class GridOperations {
@@ -238,23 +239,18 @@ public class GridOperations {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.deepHashCode(data);
+		int result = Objects.hash(width, height);
+		result = 31 * result + Arrays.hashCode(data);
 		return result;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		GridOperations other = (GridOperations) obj;
-		if (!Arrays.deepEquals(data, other.data))
-			return false;
-		return true;
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		GridOperations that = (GridOperations) o;
+		return width == that.width &&
+				height == that.height &&
+				Arrays.equals(data, that.data);
 	}
 }

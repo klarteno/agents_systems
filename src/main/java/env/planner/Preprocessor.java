@@ -61,7 +61,7 @@ public class Preprocessor {
 		
 		for (Goal goal : unsolvedGoals)
 		{			
-			Location boxLoc = boxSearch.search(availableBoxes, goal.getLetter(), goal.getLocation());
+			Location boxLoc = boxSearch.search(availableBoxes, goal.getLetter(), goal.getCopyLocation());
 			Box box = cellModel.getBox(boxLoc);
 
 			if (box != null && availableBoxes.remove(box))
@@ -88,7 +88,7 @@ public class Preprocessor {
 		{
 			for (Box box : boxes)
 			{			
-				Location agLoc = agentSearch.search(box.getColor(), box.getLocation());
+				Location agLoc = agentSearch.search(box.getColor(), box.getCopyLocation());
 				Agent agent = cellModel.getAgent(agLoc);
 				
 				if (agent != null)
@@ -124,10 +124,10 @@ public class Preprocessor {
 			Box box 	= goal.getBox();
 			Agent agent 	= box.getAgent();
 
-			dependencySearch.search(goal.getLocation(), box.getLocation(), GridOperations.GOAL)
+			dependencySearch.search(goal.getCopyLocation(), box.getCopyLocation(), GridOperations.GOAL)
 	        	.stream().forEach(loc -> addDependency(dependencies, loc, goal, true));
 
-			dependencySearch.search(box.getLocation(), agent.getLocation(), GridOperations.BOX | GridOperations.GOAL)
+			dependencySearch.search(box.getCopyLocation(), agent.getCopyLocation(), GridOperations.BOX | GridOperations.GOAL)
 		        .stream().forEach(loc -> addDependency(dependencies, loc, goal, false));
 		}
 		
@@ -179,8 +179,8 @@ public class Preprocessor {
 			Box box1 = goal1.getBox();
 			Box box2 = goal2.getBox();
 
-			int dist1 = box1.getLocation().distance(goal1.getLocation());
-			int dist2 = box2.getLocation().distance(goal2.getLocation());
+			int dist1 = box1.getCopyLocation().distance(goal1.getCopyLocation());
+			int dist2 = box2.getCopyLocation().distance(goal2.getCopyLocation());
 
 			// Sort by distance between box and goal
 			if (dist1 != dist2)
@@ -191,8 +191,8 @@ public class Preprocessor {
 			Agent agent1 = box1.getAgent();
 			Agent agent2 = box2.getAgent();
 
-			int agDist1 = agent1.getLocation().distance(box1.getLocation());
-			int agDist2 = agent2.getLocation().distance(box2.getLocation());
+			int agDist1 = agent1.getCopyLocation().distance(box1.getCopyLocation());
+			int agDist2 = agent2.getCopyLocation().distance(box2.getCopyLocation());
 
 			// Sort by distance between agent and box
 			return agDist1 - agDist2;

@@ -5,7 +5,9 @@ import level.cell.*;
 import logging.LoggerFactory;
 import util.ModelUtil;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -80,11 +82,11 @@ public class CellModel extends ActionModel {
 	}
 
 	public boolean isSolved(Goal goal) {
-		return goal.getBox() != null && goal.getLocation().equals(goal.getBox().getLocation());
+		return goal.getBox() != null && goal.getCopyLocation().equals(goal.getBox().getCopyLocation());
 	}
 	
 	public boolean isSolved(Box box) {
-		return box.getGoal() != null && box.getLocation().equals(box.getGoal().getLocation());
+		return box.getGoal() != null && box.getCopyLocation().equals(box.getGoal().getCopyLocation());
 	}
 	
 
@@ -110,13 +112,9 @@ public class CellModel extends ActionModel {
 		super.move(obj, fr, to);
 	}
 
-
-
-
-
-	public Cell removeCell(int obj, Location loc)
+	public Location removeCell(int obj, Location loc)
 	{
-		Cell cell = null;
+		Location cell = null;
 		
 		switch (obj)
 		{
@@ -135,12 +133,10 @@ public class CellModel extends ActionModel {
 		return cell;
 	}
 	
-	public void addCell(Colored data, Cell cell)
+	public void addCell(Colored data, Location cell)
 	{		
-		Location loc = data.getLocation();
-		
+		Location loc = data.getCopyLocation();
 		cell.setLocation(loc);
-		
 		int type = data instanceof Agent ? GridOperations.AGENT : GridOperations.BOX;
 		
 		if (data instanceof Agent)
@@ -156,4 +152,29 @@ public class CellModel extends ActionModel {
 		gridOperations.addLetter(data.getLetter(), type, loc);
 		gridOperations.addColor(data.getColor(), loc);
 	}
+
+	@Override
+	public int hashCode() {
+		int result = Objects.hash(super.hashCode(), goals, boxes);
+		result = 31 * result + Arrays.hashCode(agents);
+		result = 31 * result + Arrays.hashCode(agentArray);
+		result = 31 * result + Arrays.hashCode(goalArray);
+		result = 31 * result + Arrays.hashCode(boxArray);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+		CellModel cellModel = (CellModel) o;
+		return Arrays.equals(agents, cellModel.agents) &&
+				goals.equals(cellModel.goals) &&
+				boxes.equals(cellModel.boxes) &&
+				Arrays.equals(agentArray, cellModel.agentArray) &&
+				Arrays.equals(goalArray, cellModel.goalArray) &&
+				Arrays.equals(boxArray, cellModel.boxArray);
+	}
+
 }

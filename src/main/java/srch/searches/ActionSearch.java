@@ -7,7 +7,6 @@ import level.Direction;
 import level.Location;
 import level.action.Action;
 import level.cell.Agent;
-import level.cell.Cell;
 import level.cell.Goal;
 import srch.Evaluation.AStar;
 import srch.Heuristic;
@@ -29,9 +28,9 @@ public class ActionSearch extends Search implements Heuristic {
 	private Location goalLocation;
 	private int 	 goalDistance;
 
-	public List<Action> search(Agent agent, Cell tracked, Location to, int proximity, int initialStep)
+	public List<Action> search(Agent agent, Location tracked, Location to, int proximity, int initialStep)
 	{
-		return new ActionSearch(tracked.getLocation(), to, proximity, gridOperations).search(new ActionNode(agent, tracked, initialStep),gridOperations);
+		return new ActionSearch(tracked.getCopyLocation(), to, proximity, gridOperations).search(new ActionNode(agent, tracked, initialStep),gridOperations);
 	}
 
 	public ActionSearch(GridOperations gridOperations)
@@ -101,7 +100,7 @@ public class ActionSearch extends Search implements Heuristic {
 		
 		if (nextGoal != null)
 		{
-			Direction nextDir = node.getAction().getAgentLocation().inDirection(nextGoal.getBox().getLocation());
+			Direction nextDir = node.getAction().getAgentLocation().inDirection(nextGoal.getBox().getCopyLocation());
 			Direction agDir = node.getAction().getAgentLocation().inDirection(node.getAction().getNextAgentLocation());
 			
 			if (nextDir != null && agDir != null && !nextDir.hasDirection(agDir))

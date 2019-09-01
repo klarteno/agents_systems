@@ -4,6 +4,6 @@ import env.model.GridOperations;
 
 public interface IModelNode {
 	
-	public GridOperations getModel();
+	GridOperations getModel();
 
 }

@@ -1,18 +1,16 @@
 package srch.nodes;
 
 import env.model.GridOperations;
-import env.model.WorldFactory;
 import level.Direction;
 import level.Location;
 import srch.Node;
-import srch.interfaces.IDirectionNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DistanceNode extends Node implements IDirectionNode {
+public class DistanceNode extends Node {
 
 	private Direction direction;
 
@@ -29,7 +27,6 @@ public class DistanceNode extends Node implements IDirectionNode {
 		this.direction = direction;
 	}
 
-	@Override
 	public Direction getDirection() {
 		return direction;
 	}	
@@ -41,8 +38,6 @@ public class DistanceNode extends Node implements IDirectionNode {
 		for (Direction dir : Direction.EVERY)
 		{
 			Location loc = this.getLocation().newLocation(dir);
-			
-			//if (WorldFactory.getInstance().getCellModel().getGridOperations().isFree(this.getObject(), loc))
 			if(gridOperations.isFree(this.getObject(), loc))
 			{
 				expandedNodes.add(new DistanceNode(this, loc, dir));

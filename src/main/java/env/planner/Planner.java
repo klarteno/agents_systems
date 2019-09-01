@@ -6,7 +6,6 @@ import level.Location;
 import level.action.Action;
 import level.cell.Agent;
 import level.cell.Box;
-import level.cell.Cell;
 import level.cell.Goal;
 import logging.LoggerFactory;
 import srch.nodes.DistanceNode;
@@ -93,7 +92,7 @@ public class Planner {
 	{		
 		Box box			= goal.getBox();
 		Agent agent 	= box.getAgent();
-		Location loc 	= goal.getLocation();
+		Location loc 	= goal.getCopyLocation();
 		
 		// Agent will peek at the next goal to solve
 		agent.removeGoal(goal);
@@ -104,7 +103,7 @@ public class Planner {
 
 	private boolean planAgentToBox(Agent agent, Box box, OverlayModel previousOverlay)
 	{
-		int distance = agent.getLocation().distance(box.getLocation());
+		int distance = agent.getCopyLocation().distance(box.getCopyLocation());
 		if (distance  == 1) return true;
 
 		int				step			= getInitialStep(agent);
@@ -115,7 +114,7 @@ public class Planner {
 
 		if (dependencyPath.hasDependencies())
 		{
-			Entry<Location, Integer> dependency = dependencyPath.getDependency(agent.getLocation(),this);
+			Entry<Location, Integer> dependency = dependencyPath.getDependency(agent.getCopyLocation(),this);
 			
 			if (step < dependency.getValue()) 
 			{
@@ -127,8 +126,8 @@ public class Planner {
 			OverlayModel overlay			= new OverlayModel(worldProxy.getCellModel().getGridOperations());
 			if (box.getGoal() != null)
 			{
-				Map<Location, Integer> result = new DistanceSearch(box.getGoal().getLocation(), 0)
-						.search(new DistanceNode(box.getLocation()), worldProxy.getCellModel().getGridOperations());
+				Map<Location, Integer> result = new DistanceSearch(box.getGoal().getCopyLocation(), 0)
+						.search(new DistanceNode(box.getCopyLocation()), worldProxy.getCellModel().getGridOperations());
 
 				Set<Location> tmp = result.keySet();
 				overlay.addOverlay(tmp);
@@ -150,7 +149,7 @@ public class Planner {
 		return executor.getAgentToBox(agent, box);
 	}
 
-	private boolean planObjectToLocation(Agent agent, Cell tracked, Location loc, OverlayModel previousOverlay)
+	private boolean planObjectToLocation(Agent agent, Location tracked, Location loc, OverlayModel previousOverlay)
 	{
 		int				step			= getInitialStep(agent);
 		CellModel 		model 			= getModel(step);
@@ -159,7 +158,7 @@ public class Planner {
 
 		if (dependencyPath.hasDependencies())
 		{
-			Entry<Location, Integer> dependency = dependencyPath.getDependency(tracked.getLocation(),this);
+			Entry<Location, Integer> dependency = dependencyPath.getDependency(tracked.getCopyLocation(),this);
 			
 			if (step < dependency.getValue()) 
 			{
@@ -184,7 +183,7 @@ public class Planner {
 		return executor.getObjectToLocation(agent, tracked, loc);
 	}
 	
-	private boolean planAgentToTracked(Agent agent, Cell tracked, Location loc, OverlayModel previousOverlay)
+	private boolean planAgentToTracked(Agent agent, Location tracked, Location loc, OverlayModel previousOverlay)
 	{
 		if (tracked instanceof Box)
 		{
@@ -201,7 +200,7 @@ public class Planner {
 			Box box 	= model.getBox(dependency);
 			//Agent agent 	= model.getAgent(AgentSearch.search(box.getColor(), box.getLocation(), model,worlProxy.getCellModel().getGridOperations()));
 			AgentSearch agentSearch = new AgentSearch(model);
-			Agent agent 	= model.getAgent(agentSearch.search(box.getColor(), box.getLocation()));
+			Agent agent 	= model.getAgent(agentSearch.search(box.getColor(), box.getCopyLocation()));
 
 			return solveAgentToBoxDependency(toHelp, agent, box, overlay);
 		}
@@ -228,7 +227,7 @@ public class Planner {
 		return solveObjectToLocationDependency(toHelp, agent, box, overlay);
 	}
 	
-	private int solveObjectToLocationDependency(Agent toHelp, Agent agent, Cell tracked, OverlayModel overlay)
+	private int solveObjectToLocationDependency(Agent toHelp, Agent agent, Location tracked, OverlayModel overlay)
 	{
 		int agentStep = getInitialStep(agent);
 		if (agentStep > getInitialStep(toHelp))
@@ -242,12 +241,12 @@ public class Planner {
 		boolean isAgent = tracked instanceof Agent;
 		if (toHelp.equals(agent))
 		{
-			storage = storageSearch.search(tracked.getLocation(), agent, true, isAgent, overlay, model, worldProxy.getFreeCellCount(), worldProxy.getCellModel().getGridOperations());
+			storage = storageSearch.search(tracked.getCopyLocation(), agent, true, isAgent, overlay, model, worldProxy.getFreeCellCount(), worldProxy.getCellModel().getGridOperations());
 		}
 
 		if (storage == null)
 		{
-			storage = storageSearch.search(tracked.getLocation(), agent, false, isAgent, overlay, model, worldProxy.getFreeCellCount(), worldProxy.getCellModel().getGridOperations());
+			storage = storageSearch.search(tracked.getCopyLocation(), agent, false, isAgent, overlay, model, worldProxy.getFreeCellCount(), worldProxy.getCellModel().getGridOperations());
 		}		
 		
 		if (storage == null)

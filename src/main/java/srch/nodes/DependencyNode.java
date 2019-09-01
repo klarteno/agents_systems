@@ -5,16 +5,13 @@ import env.model.GridOperations;
 import level.Direction;
 import level.Location;
 import srch.Node;
-import srch.interfaces.IDependencyNode;
-import srch.interfaces.IDirectionNode;
-import srch.interfaces.IModelNode;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DependencyNode extends Node implements IDirectionNode, IModelNode, IDependencyNode {
+public class DependencyNode extends Node  {
 
 	private Direction direction;
 	private int dependency;
@@ -48,12 +45,10 @@ public class DependencyNode extends Node implements IDirectionNode, IModelNode, 
 		}
 	}
 
-	@Override
 	public Direction getDirection() {
 		return direction;
 	}
 
-	@Override
 	public GridOperations getModel() {
 		return model.getGridOperations();
 	}
@@ -62,7 +57,6 @@ public class DependencyNode extends Node implements IDirectionNode, IModelNode, 
 		return dependency;
 	}
 
-	@Override
 	public int getDependencyCount() {
 		return dependencyCount;
 	}

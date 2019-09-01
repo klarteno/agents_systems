@@ -2,7 +2,7 @@ package level.cell;
 
 import level.Location;
 
-public abstract class Lettered extends Cell {
+public abstract class Lettered extends Location {
 	
 	private char letter;
 	

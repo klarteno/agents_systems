@@ -7,14 +7,11 @@ import level.cell.Box;
 import srch.Node;
 import srch.Search;
 import srch.Strategy;
-import srch.interfaces.Getter;
 import srch.nodes.ClosestNode;
 
 import java.util.Set;
 
 public class BoxSearch extends Search {
-
-
 
 	public Location search(Set<Box> boxes, char letter, Location from)
 	{
@@ -30,12 +27,10 @@ public class BoxSearch extends Search {
 	{
 		this.objectType = GridOperations.BOX;
 		this.setStrategy(new Strategy.BFS());
-
-
 		this.cellModel  = model;
 	}
 
-	public BoxSearch(Set<Box> boxes, char letter, CellModel model)
+	private BoxSearch(Set<Box> boxes, char letter, CellModel model)
 	{
 		this.objectType = GridOperations.BOX;
 		this.setStrategy(new Strategy.BFS());
@@ -48,11 +43,10 @@ public class BoxSearch extends Search {
 	@Override
 	public boolean isGoalState(Node n)
 	{
-		if (!Getter.getModel(n).hasObject(objectType, n.getLocation()))
+		if (!((ClosestNode) n).getModel().hasObject(objectType, n.getLocation()))
 		{
 			return false;
 		}
-		
 		Box box = cellModel.getBox(n.getLocation());
 		
 		return box.getLetter() == letter && boxes.contains(box);

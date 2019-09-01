@@ -7,7 +7,6 @@ import level.Location;
 import level.action.*;
 import level.cell.Agent;
 import level.cell.Box;
-import level.cell.Cell;
 import level.cell.Colored;
 import logging.LoggerFactory;
 import srch.searches.ActionSearch;
@@ -38,7 +37,7 @@ public class Executor {
 	protected boolean getAgentToBox(Agent agent, Box box)
 	{
 		int initialStep = planner.getInitialStep(agent);
-		List<Action> actions = actionSearch.search(agent, agent, box.getLocation(), 1, initialStep);
+		List<Action> actions = actionSearch.search(agent, agent, box.getCopyLocation(), 1, initialStep);
 
 		if (actions == null)
 		{
@@ -60,7 +59,7 @@ public class Executor {
 	 * @param location to move the the object to
 	 * @return True if the movement is possible
 	 */
-	protected boolean getObjectToLocation(Agent agent, Cell tracked, Location location)
+	protected boolean getObjectToLocation(Agent agent, Location tracked, Location location)
 	{
 		int initialStep = planner.getInitialStep(agent);
 		List<Action> actions = actionSearch.search(agent, tracked, location, 0, initialStep);
@@ -85,7 +84,7 @@ public class Executor {
 		
 		for (int i = 0; i < steps; i++)
 		{
-			actions.add(new SkipAction(agent.getLocation()));
+			actions.add(new SkipAction(agent.getCopyLocation()));
 		}
 
 		planner.getActions().get(agent.getNumber()).addAll(actions);
@@ -121,34 +120,31 @@ public class Executor {
 		}
 	}
 	
-	private void updateModelWithLocations(Map<Cell, Location> originalLocations, int step)
+	private void updateModelWithLocations(Map<Location, Location> originalLocations, int step)
 	{		
 		CellModel model = planner.getModel(step);
 		int objectType;
 		// Remove old cells and store object references
-		for (Entry<Cell, Location> entry : originalLocations.entrySet())
+		for (Entry<Location, Location> entry : originalLocations.entrySet())
 		{
 			objectType = entry.getKey() instanceof Agent ? GridOperations.AGENT : GridOperations.BOX;
-			Cell object = model.removeCell(objectType, entry.getValue());
+			Location object = model.removeCell(objectType, entry.getValue());
 			model.addCell((Colored) entry.getKey(), object);
 		}
 	}
 
-	private void blockGridLocation(int agentNumber, int fromAction)
+	private void blockGridLocation(int agentNumber, int modelStep)
 	{
-		GridOperations model = planner.getModel(fromAction).getGridOperations();
+		GridOperations model = planner.getModel(modelStep).getGridOperations();
 		List<Action> agentActions = planner.getActions().get(agentNumber);
 		
-		for (int nextAction = fromAction - 1; nextAction < agentActions.size(); nextAction++)
+		for (int nextAction = modelStep - 1; nextAction < agentActions.size(); nextAction++)
 		{
 			Action action = agentActions.get(nextAction);
 			model.add(GridOperations.LOCKED, action.getNextAgentLocation());
 			
-			if (action instanceof PullAction)
-			{
-				model.add(GridOperations.LOCKED, ((ActionBoxMove) action).getNewBoxLocation());
-			}
-			else if (action instanceof PushAction)
+			if (action.getType() == Action.ActionType.Pull
+				||action.getType() == Action.ActionType.Push)
 			{
 				model.add(GridOperations.LOCKED, ((ActionBoxMove) action).getNewBoxLocation());
 			}
