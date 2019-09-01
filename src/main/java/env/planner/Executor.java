@@ -112,8 +112,6 @@ public class Executor {
 		// Create models for the actions
 		planner.createModels(initialStep, actions);
 
-
-
 		// Update the grid models with the actions
 		for (Action action : actions)
 		{

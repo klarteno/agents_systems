@@ -110,19 +110,9 @@ public class Planner {
 		int				step			= getInitialStep(agent);
 		CellModel 		model 			= getModel(step);
 		DependencyPath 	dependencyPath 	= this.dependencyPath.getDependencyPath(agent, box, step, worldProxy.getCellModel().getGridOperations());
-		OverlayModel overlay			= new OverlayModel(previousOverlay, worldProxy.getCellModel().getGridOperations());
 
-		// Add overlay for getting box to goal
-		if (box.getGoal() != null)
-		{
-			Map<Location, Integer> result = new DistanceSearch(box.getGoal().getLocation(), 0)
-					.search(new DistanceNode(box.getLocation()), worldProxy.getCellModel().getGridOperations());
 
-			overlay.addOverlay(result.keySet());
 
-		}
-		overlay.addOverlay(dependencyPath.getPath());
-		
 		if (dependencyPath.hasDependencies())
 		{
 			Entry<Location, Integer> dependency = dependencyPath.getDependency(agent.getLocation(),this);
@@ -132,9 +122,22 @@ public class Planner {
 				executor.executeSkips(agent, dependency.getValue() - step);
 				return planAgentToBox(agent, box, previousOverlay);
 			}
-			
+
+			// Add overlay for getting box to goal
+			OverlayModel overlay			= new OverlayModel(worldProxy.getCellModel().getGridOperations());
+			if (box.getGoal() != null)
+			{
+				Map<Location, Integer> result = new DistanceSearch(box.getGoal().getLocation(), 0)
+						.search(new DistanceNode(box.getLocation()), worldProxy.getCellModel().getGridOperations());
+
+				Set<Location> tmp = result.keySet();
+				overlay.addOverlay(tmp);
+			}
+			List<Location> tmp = dependencyPath.getPath();
+			overlay.addOverlay(tmp);
 			int newStep = solveDependency(agent, dependency.getKey(), overlay, model);
-			
+			overlay.removeOverlay(); //could be removed
+
 			if (newStep > getInitialStep(agent)) 
 			{
 				// Maximum: newStep - step, 1 for optimal solution
@@ -143,11 +146,8 @@ public class Planner {
 			}			
 			return planAgentToBox(agent, box, previousOverlay);
 		}
-		
-		boolean result = executor.getAgentToBox(agent, box);
-		overlay.removeOverlay();
-		
-		return result;
+
+		return executor.getAgentToBox(agent, box);
 	}
 
 	private boolean planObjectToLocation(Agent agent, Cell tracked, Location loc, OverlayModel previousOverlay)
@@ -155,9 +155,7 @@ public class Planner {
 		int				step			= getInitialStep(agent);
 		CellModel 		model 			= getModel(step);
 		DependencyPath 	dependencyPath 	= this.dependencyPath.getDependencyPath(agent, tracked, loc, step, worldProxy.getCellModel().getGridOperations());
-		OverlayModel overlay			= new OverlayModel(previousOverlay, worldProxy.getCellModel().getGridOperations());
-		
-		overlay.addOverlay(dependencyPath.getPath());
+
 
 		if (dependencyPath.hasDependencies())
 		{
@@ -168,9 +166,12 @@ public class Planner {
 				executor.executeSkips(agent, dependency.getValue() - step);
 				return planAgentToTracked(agent, tracked, loc, previousOverlay);
 			}
-			
+
+			OverlayModel overlay			= new OverlayModel(worldProxy.getCellModel().getGridOperations());
+			overlay.addOverlay(dependencyPath.getPath());
 			int newStep = solveDependency(agent, dependency.getKey(), overlay, model);
-			
+			overlay.removeOverlay(); //could be removed
+
 			if (newStep > getInitialStep(agent)) 
 			{
 				// Maximum: newStep - step, 1 for optimal solution
@@ -178,13 +179,9 @@ public class Planner {
 				executor.executeSkips(agent, 1);
 			}
 			return planAgentToTracked(agent, tracked, loc, previousOverlay);
-		}		
-		
-		boolean result = executor.getObjectToLocation(agent, tracked, loc);
-		
-		overlay.removeOverlay();
-		
-		return result;
+		}
+
+		return executor.getObjectToLocation(agent, tracked, loc);
 	}
 	
 	private boolean planAgentToTracked(Agent agent, Cell tracked, Location loc, OverlayModel previousOverlay)
@@ -203,19 +200,15 @@ public class Planner {
 		{
 			Box box 	= model.getBox(dependency);
 			//Agent agent 	= model.getAgent(AgentSearch.search(box.getColor(), box.getLocation(), model,worlProxy.getCellModel().getGridOperations()));
-
 			AgentSearch agentSearch = new AgentSearch(model);
-
-
 			Agent agent 	= model.getAgent(agentSearch.search(box.getColor(), box.getLocation()));
-
 
 			return solveAgentToBoxDependency(toHelp, agent, box, overlay);
 		}
 		else if (model.hasObject(GridOperations.AGENT, dependency))
 		{
-			Agent agent 	= model.getAgent(dependency);
-			
+			Agent agent = model.getAgent(dependency);
+
 			return solveObjectToLocationDependency(toHelp, agent, agent, overlay);
 		}		
 		throw new UnsupportedOperationException("Attempt to solve unknown dependency");
@@ -242,7 +235,7 @@ public class Planner {
 		{
 			return agentStep;
 		}
-		
+
 		CellModel model = getModel(agentStep);
 		
 		Location storage = null;
