@@ -2,10 +2,7 @@ package env.model;
 
 import env.planner.Planner;
 import level.Location;
-import level.action.Action;
-import level.action.MoveAction;
-import level.action.PullAction;
-import level.action.PushAction;
+import level.action.*;
 import level.cell.Agent;
 import level.cell.Cell;
 
@@ -93,17 +90,17 @@ public class SimulationModel {
 	{		
         switch(action.getType())
         {
-        case MOVE: return canMove((MoveAction) action);
-        case PUSH: return canPush((PushAction) action);
-        case PULL: return canPull((PullAction) action);
-        case SKIP: return true;
+        case Move: return canMove((MoveAction) action);
+        case Push: return canPush((ActionBoxMove) action);
+        case Pull: return canPull((ActionBoxMove) action);
+        case Skip: return true;
         }
         throw new UnsupportedOperationException("Invalid action: " + action.getType());        
 	}
 
     private synchronized boolean canMove(MoveAction action)
     {        
-        Location nAgLoc = action.getNewAgentLocation();
+        Location nAgLoc = action.getNextAgentLocation();
         
         if (nAgLoc == null) return false;
 
@@ -116,7 +113,7 @@ public class SimulationModel {
 		return !planner.hasAgentWithOppositeAction(currentStep, action);
 	}
     
-    private boolean canPush(PushAction action)
+    private boolean canPush(ActionBoxMove action)
     {    	
     	Location agLoc 	 = action.getAgentLocation();
     	Location boxLoc  = action.getBoxLocation();
@@ -134,10 +131,10 @@ public class SimulationModel {
 		return !planner.hasModel(nextStep) || planner.getModel(nextStep).gridOperations.isFree(nBoxLoc);
 	}
     
-    private boolean canPull(PullAction action)
+    private boolean canPull(ActionBoxMove action)
     {    	
     	Location agLoc 	= action.getAgentLocation();
-    	Location nAgLoc = action.getNewAgentLocation();
+    	Location nAgLoc = action.getNextAgentLocation();
     	Location boxLoc = action.getBoxLocation();
         
         if (agLoc == null) return false;

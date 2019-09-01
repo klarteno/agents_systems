@@ -3,71 +3,19 @@ package level.action;
 import level.Direction;
 import level.Location;
 
-public class PushAction extends Action {
-	
-	private Direction agentDir;
-	private Direction boxDir;
-	
-	private Location boxLocation;
-	private Location newBoxLocation;
-	
-	public PushAction(Direction agentDir, Direction boxDir, Location location)
-	{
-		super(ActionType.PUSH, location, location.newLocation(agentDir));
-		this.agentDir 		= agentDir;
-		this.boxDir 		= boxDir;	
-		this.boxLocation	= getAgentLocation().newLocation(agentDir);
-		this.newBoxLocation = getNewAgentLocation().newLocation(boxDir);
-	}
-	
-	protected Direction getAgentDir()
-	{
-		return agentDir;
-	}
-	
-	protected Direction getBoxDir()
-	{
-		return boxDir;
-	}
-	
-	public Location getBoxLocation()
-	{
-		return boxLocation;
-	}
-	
-	public Location getNewBoxLocation()
-	{
-		return newBoxLocation;
-	}
-	
-	@Override
-	public String toString()
-	{
-		return "Push(" + agentDir.toString() + "," 
-				+ boxDir.toString() + ")";
-	}
-	
-	@Override
-	public Action getOpposite()
-	{
-		return new PullAction(this.getAgentDir().getOpposite(), this.getBoxDir(), 
-				this.getAgentLocation().newLocation(this.getAgentDir()));
-	}
-	
-	@Override
-	public boolean isOpposite(Action action) {
-		if (action instanceof PullAction)
-		{
-			PullAction other = (PullAction) action;
-			return Direction.isOpposite(this.getAgentDir(), other.getAgentDir())
-					&& this.getBoxDir().equals(other.getBoxDir());
-		}
-		else
-		{
-			return false;			
-		}
-	}
+public class PushAction extends ActionBoxMove {
 
+	public PushAction(Direction agentDir, Direction boxDir, Location agentLocation)
+	{
+		super(ActionType.Push, agentLocation,  agentLocation.newLocation(agentDir));
+
+		this.agentDir 		= agentDir;
+		this.boxDir 		= boxDir;
+		this.boxLocation	= getAgentLocation().newLocation(agentDir);
+		this.newBoxLocation = getNextAgentLocation().newLocation(boxDir);
+	}
+	
+	/*
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -90,5 +38,5 @@ public class PushAction extends Action {
 			return false;
 		return boxDir == other.boxDir;
 	}
-
+*/
 }

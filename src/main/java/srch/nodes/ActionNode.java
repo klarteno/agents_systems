@@ -31,7 +31,7 @@ public class ActionNode extends Node implements IActionNode, IModelNode {
 
 	private ActionNode(Node parent, Action action, SimulationModel model)
 	{
-		super(parent, action.getNewAgentLocation());
+		super(parent, action.getNextAgentLocation());
 		
 		this.action = action;
 		this.model 	= model;
@@ -46,7 +46,7 @@ public class ActionNode extends Node implements IActionNode, IModelNode {
 	private boolean isSkipNode()
 	{
 		if (action == null) return true;
-		return action.getType() == ActionType.SKIP;
+		return action.getType() == ActionType.Skip;
 	}
 	
 	public Location getTrackedLoc()

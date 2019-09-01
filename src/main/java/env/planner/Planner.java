@@ -119,7 +119,7 @@ public class Planner {
 			
 			if (step < dependency.getValue()) 
 			{
-				executor.executeSkips(agent, dependency.getValue() - step);
+				executor.startStopActions(agent, dependency.getValue() - step);
 				return planAgentToBox(agent, box, previousOverlay);
 			}
 
@@ -142,7 +142,7 @@ public class Planner {
 			{
 				// Maximum: newStep - step, 1 for optimal solution
 //				executor.executeSkips(agent, newStep - step);
-				executor.executeSkips(agent, 1);
+				executor.startStopActions(agent, 1);
 			}			
 			return planAgentToBox(agent, box, previousOverlay);
 		}
@@ -163,7 +163,7 @@ public class Planner {
 			
 			if (step < dependency.getValue()) 
 			{
-				executor.executeSkips(agent, dependency.getValue() - step);
+				executor.startStopActions(agent, dependency.getValue() - step);
 				return planAgentToTracked(agent, tracked, loc, previousOverlay);
 			}
 
@@ -176,7 +176,7 @@ public class Planner {
 			{
 				// Maximum: newStep - step, 1 for optimal solution
 //				executor.executeSkips(agent, newStep - step);
-				executor.executeSkips(agent, 1);
+				executor.startStopActions(agent, 1);
 			}
 			return planAgentToTracked(agent, tracked, loc, previousOverlay);
 		}
@@ -280,7 +280,7 @@ public class Planner {
 		if (hasModel(step))
 		{
 			CellModel model = getModel(step);
-			Agent agent = model.getAgent(action.getNewAgentLocation());
+			Agent agent = model.getAgent(action.getNextAgentLocation());
 			
 			if (agent != null && step < actions.get(agent.getNumber()).size())
 			{

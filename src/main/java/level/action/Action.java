@@ -9,10 +9,10 @@ import java.util.List;
 public abstract class Action {
 
 	public enum ActionType {
-		MOVE,
-		PUSH, 
-		PULL,
-		SKIP
+		Move,
+		Push,
+		Pull,
+		Skip
 	}
 	
 	private ActionType type;
@@ -36,7 +36,7 @@ public abstract class Action {
 		return this.agentLocation;
 	}
 	
-	public Location getNewAgentLocation()
+	public Location getNextAgentLocation()
 	{
 		return this.newAgentLocation;
 	}

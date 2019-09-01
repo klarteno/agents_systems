@@ -109,43 +109,47 @@ public class CellModel extends ActionModel {
 
 		super.move(obj, fr, to);
 	}
-	
-	public Cell removeCell(int obj, Location l)
+
+
+
+
+
+	public Cell removeCell(int obj, Location loc)
 	{
 		Cell cell = null;
 		
 		switch (obj)
 		{
 		case GridOperations.AGENT:
-			cell = agentArray[l.x][l.y];
-			agentArray[l.x][l.y] = null;
+			cell = agentArray[loc.x][loc.y];
+			agentArray[loc.x][loc.y] = null;
 			break;
 		case GridOperations.BOX:
-			cell = boxArray[l.x][l.y];
-			boxArray  [l.x][l.y] = null;
+			cell = boxArray[loc.x][loc.y];
+			boxArray  [loc.x][loc.y] = null;
 			break;
 		default: return null;
 		}
-		gridOperations.remove(obj, l);
+		gridOperations.remove(obj, loc);
 
 		return cell;
 	}
 	
-	public void addCell(Colored data, Cell object)
+	public void addCell(Colored data, Cell cell)
 	{		
 		Location loc = data.getLocation();
 		
-		object.setLocation(loc);
+		cell.setLocation(loc);
 		
 		int type = data instanceof Agent ? GridOperations.AGENT : GridOperations.BOX;
 		
 		if (data instanceof Agent)
 		{
-			agentArray[loc.x][loc.y] = (Agent) object;
+			agentArray[loc.x][loc.y] = (Agent) cell;
 		}
 		else if (data instanceof Box)
 		{
-			boxArray[loc.x][loc.y] = (Box) object;
+			boxArray[loc.x][loc.y] = (Box) cell;
 		}
 
 		gridOperations.add(type, loc);
