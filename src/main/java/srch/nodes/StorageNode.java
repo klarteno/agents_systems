@@ -5,7 +5,7 @@ import level.Direction;
 import level.Location;
 import level.cell.Agent;
 import srch.Node;
-import util.ModelUtil;
+import util.CollectionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,8 @@ public class StorageNode extends Node {
 
 		this.gridOperations 		= gridOperations;
 		this.agent 		= agent;		
-		this.agNumber 	= ModelUtil.getAgentNumber(agent);
+		this.agNumber 	= CollectionUtil.getAgentNumber(agent);
+		this.agNumber 	= agent.getNumber();
 	}
 
 	private StorageNode(Node parentNode, Direction direction, Location location) {
@@ -58,7 +59,7 @@ public class StorageNode extends Node {
 			// this box can be moved to another loc
 			if (this.getModel().hasObject(GridOperations.BOX, loc) &&
 				this.getModel().getColor(loc).equals(agent.getColor()) &&
-				!this.getModel().isBlocked(loc))
+					this.getModel().isNextCellFree(loc))
 			{
 				expandedNodes.add(new StorageNode(this, dir, loc));
 			}

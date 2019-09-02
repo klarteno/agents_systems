@@ -9,7 +9,7 @@ public class WorldEnvTest {
 
     @Test
     @DisplayName("WorldEnv testing")
-    void addsTwoNumbers() {
+    void worldEnvInitTest() {
         WorldEnv  worldEnv = null;
         assertNull(worldEnv);
         worldEnv = new WorldEnv();

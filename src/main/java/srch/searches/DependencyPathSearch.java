@@ -11,7 +11,7 @@ import srch.Heuristic;
 import srch.Node;
 import srch.Search;
 import srch.Strategy.BestFirst;
-import util.ModelUtil;
+import util.CollectionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,7 +142,9 @@ class DependencyPathNode extends Node  {
 	{
 		DependencyPath path = new DependencyPath();
 
-		int agNumber = ModelUtil.getAgentNumber(agent);
+		int agNumber = CollectionUtil.getAgentNumber(agent);
+		agNumber 	= agent.getNumber();
+
 
 		for (int futureStep = this.getStep(); futureStep < planner.dataModelCount(); futureStep++)
 		{

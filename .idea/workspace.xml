@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ArtifactsWorkspaceSettings">
-    <artifacts-to-build>
-      <artifact name="client:jar" />
-    </artifacts-to-build>
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="91dbbb4f-aa69-4d3c-bafd-c8b04e9b03d6" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/env/planner/Executor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/env/planner/Executor.java" afterDir="false" />
+    <list default="true" id="fc92cd8a-1c6f-4190-86b6-18550220220a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -50,6 +46,13 @@
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="agents_systems" type="f1a62948:ProjectNode" />
+                <item name="Source Sets" type="e897c970:GradleViewContributor$SourceSetsNode" />
+                <item name="test" type="396b929e:GradleViewContributor$SourceSetNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="agents_systems" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
               </path>
               <path>
@@ -57,12 +60,6 @@
                 <item name="agents_systems" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
                 <item name="build" type="c8890929:TasksNode$1" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="agents_systems" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="build setup" type="c8890929:TasksNode$1" />
               </path>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
@@ -82,47 +79,15 @@
       </state>
     </system>
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Class" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="1" />
   </component>
-  <component name="ProjectId" id="1PZ9r9cqGlC6BhoYniVEOyFplXb" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectId" id="1QH2psSImeuXm7S6m4fqmY8wgf6" />
   <component name="PropertiesComponent">
-    <property name="GenerateAntBuildDialog.backupFiles" value="true" />
-    <property name="GenerateAntBuildDialog.enableUiFormCompile" value="true" />
-    <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
-    <property name="GenerateAntBuildDialog.outputFileNameProperty" value="agents_systems" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/DTU spring 2019/02285 Artificial Intelligence and Multi-Agent Systems F19/assignments/backup_report/02285-MAS" />
-    <property name="project.structure.last.edited" value="Artifacts" />
-    <property name="project.structure.proportion" value="0.15" />
-    <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
-  </component>
-  <component name="RecentsManager">
-    <key name="ExtractSuperBase.RECENT_KEYS">
-      <recent name="level.action" />
-    </key>
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="env" />
-      <recent name="env.model" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\androgo\Downloads\DTU spring 2019\02285 Artificial Intelligence and Multi-Agent Systems F19\assignments\agents_systems\src\main\java" />
-      <recent name="C:\Users\androgo\Downloads\DTU spring 2019\02285 Artificial Intelligence and Multi-Agent Systems F19\assignments\agents_systems\src\main\java\env" />
-      <recent name="C:\Users\androgo\Downloads\DTU spring 2019\02285 Artificial Intelligence and Multi-Agent Systems F19\assignments\agents_systems\src\main\java\util" />
-      <recent name="C:\Users\androgo\Downloads\DTU spring 2019\02285 Artificial Intelligence and Multi-Agent Systems F19\assignments\agents_systems\src\main\java\env\model" />
-    </key>
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -150,12 +115,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="WorldEnvTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="ExecutorTest.testExecutions" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;env.WorldEnvTest&quot;" />
+        <option name="scriptParameters" value="--tests &quot;env.planner.ExecutorTest.testExecutions&quot;" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -189,25 +154,6 @@
       <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="agents_systems [classes]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="classes" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
-      <method v="2" />
-    </configuration>
     <configuration name="agents_systems [jar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -227,13 +173,32 @@
       <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
       <method v="2" />
     </configuration>
+    <configuration name="agents_systems [testClasses]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="testClasses" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.agents_systems [jar]" />
         <item itemvalue="Application.Main" />
-        <item itemvalue="Gradle.WorldEnvTest" />
-        <item itemvalue="Gradle.agents_systems [classes]" />
         <item itemvalue="Gradle.agents_systems [build]" />
+        <item itemvalue="Gradle.agents_systems [jar]" />
+        <item itemvalue="Gradle.ExecutorTest.testExecutions" />
+        <item itemvalue="Gradle.agents_systems [testClasses]" />
       </list>
     </recent_temporary>
   </component>
@@ -251,11 +216,11 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="91dbbb4f-aa69-4d3c-bafd-c8b04e9b03d6" name="Default Changelist" comment="" />
-      <created>1566070947349</created>
+      <changelist id="fc92cd8a-1c6f-4190-86b6-18550220220a" name="Default Changelist" comment="" />
+      <created>1567413386981</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1566070947349</updated>
+      <updated>1567413386981</updated>
     </task>
     <servers />
   </component>
@@ -273,14 +238,10 @@
     </option>
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/test/java/env/WorldEnvTest.java</url>
-          <line>18</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="Remote">
+        <watch expression="actions" language="JAVA" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

@@ -1,71 +1,86 @@
 package env;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import env.model.CellModel;
 import env.model.WorldFactory;
+import env.planner.Executor;
 import env.planner.Planner;
-import level.Level;
-import level.Location;
+import env.planner.Preprocessor;
 import level.action.Action;
 import level.action.SkipAction;
 import level.cell.Agent;
+import level.cell.Goal;
 import logging.LoggerFactory;
 
-import java.io.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
-public class WorldEnv extends ServerEnv {
+public class WorldEnv {
 
     private static final Logger logger = LoggerFactory.getLogger(WorldEnv.class.getName());
 	
-    private CellModel cellModel;
+    //private CellModel cellModel;
     private Planner planner;
-    
+    private Executor executor;
+	Preprocessor preprocessor;
+
     public WorldEnv()
     {
     	super();
 
 		try 
 		{
-			//Level resultParsed = Level.parse(serverIn);
-			ObjectMapper objectMapper = new ObjectMapper();
-
-			//InputGridData inputGridData = new InputGridData(resultParsed.height,resultParsed.width,resultParsed.nbAgs,resultParsed.data,resultParsed.colors);
-			//WorldEnv.writeGridObject(inputGridData);
-			InputGridData inputGridData = WorldEnv.readGridObject(Optional.of("MAYSoSirius.tmp"));
-
-			cellModel = new CellModel(inputGridData.width, inputGridData.height, inputGridData.nbAgs);
-			cellModel.setGoalLocations(cellModel.getGoals().stream().map(Location::getCopyLocation)
-					.collect(Collectors.toSet()));
-
-			WorldFactory worldModel = new WorldFactory(inputGridData, cellModel);
+			WorldFactory worldModel = new WorldFactory();
 
 			planner = new Planner(worldModel);
-			planner.plan();
-		} 
+			executor = new Executor(planner);
+			planner.setExecutor(executor);
+
+			CellModel initialModel = planner.initPlan();
+			preprocessor = new Preprocessor();
+			List<Goal> goals = preprocessor.preprocess(initialModel);
+
+			this.solveLevel(planner,goals);
+		}
 		catch (Exception e) 
 		{
 			logger.warning("Exception: " + e + " at init: " + e.getMessage());
 		}
     }
-    
+
+	private void solveLevel(Planner planner, List<Goal> goals)
+	{
+		while (!goals.isEmpty())
+		{
+			for (Goal goal : goals)
+			{
+				planner.solveGoal(goal);
+			}
+			int lastStep = planner.getLastStep();
+			goals = preprocessor.preprocess(planner.getModel(lastStep));
+		}
+	}
+
     public int getSolutionLength() {
     	return planner.getLastStep();
     }
-  
+
+    public Planner getPlanner(){
+		return this.planner;
+	}
+
+	public Executor getExecutor(){
+	return this.executor;
+}
+
     public void executePlanner()
     {
     	int finalStep = getSolutionLength();
-    	
     	// Append skip actions to incomplete action lists
-    	for (Agent agent : cellModel.getAgents())
-    	{
+    	//for (Agent agent : cellModel.getAgents())
+		for (Agent agent : planner.getWorldProxy().getInitialModel().getAgents())
+		{
     		List<Action> actions = planner.getActions().get(agent.getNumber());
-    		
     		while (actions.size() < finalStep)
     		{
     			actions.add(new SkipAction(agent.getCopyLocation()));
@@ -73,7 +88,6 @@ public class WorldEnv extends ServerEnv {
     	}
     	
     	List<List<Action>> actions = planner.getActions();
-    	
 		String[] jointAction = new String[actions.size()];
     	
     	// Send joint action to server for each step
@@ -83,80 +97,9 @@ public class WorldEnv extends ServerEnv {
     		{
     			jointAction[agNumber] = actions.get(agNumber).get(step).toString();
     		}
-			sendJointActionToConsole(jointAction);
+			ServerEnv.sendJointActionToConsole(jointAction);
     	}
     }
-
-
-	public static void writeGridObject(InputGridData inputGridData,Optional<String> file) throws IOException {
-		FileOutputStream fileOutputStream = null;
-		ObjectOutputStream objectOutputStream = null;
-
-		String fileName = file.orElse("grid_data.tmp");
-
-		try
-		{
-			fileOutputStream = new FileOutputStream(fileName);
-			objectOutputStream = new ObjectOutputStream(fileOutputStream);
-
-			/*
-			 * Write the specified object to the
-			 * ObjectOutputStream.
-			 */
-			objectOutputStream.writeObject(inputGridData);
-			//System.out.println("Successfully written list of employee objects to the file.\n");
-		}
-		finally
-		{
-			if (objectOutputStream != null)
-			{
-				/*
-				 * Closing a ObjectOutputStream will also
-				 * close the OutputStream instance to which
-				 * the ObjectOutputStream is writing.
-				 */
-				objectOutputStream.close();
-			}
-		}
-
-	}
-
-	private static InputGridData readGridObject(Optional<String> file) throws IOException, ClassNotFoundException {
-		String fileName = file.orElse("grid_data.tmp");
-
-    	FileInputStream fileInputStream = null;
-		ObjectInputStream objectInputStream = null;
-
-		InputGridData  inputGridData;
-
-		try
-		{
-			fileInputStream = new FileInputStream(fileName);
-			objectInputStream = new ObjectInputStream(fileInputStream);
-
-			/*
-			 * Read an object from the ObjectInputStream.
-			 */
-			inputGridData = (InputGridData) objectInputStream.readObject();
-			//System.out.println("Successfully read list of employee objects from the file.\n");
-
-			//System.out.println("inputGridData from file = " +inputGridData.toString());
-		}
-		finally
-		{
-			if (objectInputStream != null)
-			{
-				/*
-				 * Closing a ObjectInputStream will also
-				 * close the InputStream instance from which
-				 * the ObjectInputStream is reading.
-				 */
-				objectInputStream.close();
-			}
-		}
-		return inputGridData;
-	}
-
 
 
 }

@@ -16,7 +16,7 @@ public class FutureModel {
 		cellModel = new MyCellModel(model);
 		originalLocations = new HashMap<>();
 	}
-	
+
 	private void addOriginalLocation(Location cell, Location location)
 	{
 		for (Location key : originalLocations.keySet())

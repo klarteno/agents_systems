@@ -5,22 +5,22 @@ import java.util.Arrays;
 
 public class ServerEnv {
 
-    protected BufferedReader serverIn;
-	private PrintStream	serverOut;
+    public static BufferedReader serverIn;
+	private static PrintStream	serverOut;
     
-	ServerEnv()
+	public ServerEnv()
 	{
 		serverIn 	= new BufferedReader(new InputStreamReader(System.in));
 		serverOut 	= new PrintStream(new FileOutputStream(FileDescriptor.out));
 	}
 
-	void sendJointActionToConsole(String[] jointAction)
+	static void sendJointActionToConsole(String[] jointAction)
 	{
 			System.out.println(Arrays.toString(jointAction));
 			//System.in.read();
 	}
 	
-	public void sendJointActionToServer(String[] jointAction)
+	static void sendJointActionToServer(String[] jointAction)
 	{
 		try 
 		{

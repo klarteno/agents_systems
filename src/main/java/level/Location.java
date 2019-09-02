@@ -29,8 +29,6 @@ public class Location {
 		return new Location(this.x,this.y);
 	}
 
-
-
 	public int distance(Location other)
 	{
 		return Math.abs(this.x - other.x) + Math.abs(this.y - other.y);

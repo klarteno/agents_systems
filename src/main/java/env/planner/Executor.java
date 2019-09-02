@@ -1,13 +1,16 @@
 package env.planner;
 
 import env.model.CellModel;
-import env.model.GridOperations;
 import env.model.FutureModel;
+import env.model.GridOperations;
 import level.Location;
-import level.action.*;
+import level.action.Action;
+import level.action.ActionBoxMove;
+import level.action.SkipAction;
 import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Colored;
+import level.cell.Tracked;
 import logging.LoggerFactory;
 import srch.searches.ActionSearch;
 
@@ -25,26 +28,30 @@ public class Executor {
 	public Executor(Planner planner)
 	{
 		this.planner = planner;
-		this.actionSearch = new ActionSearch(planner.worldProxy.getCellModel().getGridOperations());
+		this.actionSearch = new ActionSearch(planner.worldProxy.getInitialModel().getGridOperations());
 	}
 
 	/**
 	 * Moves the agent to a location next to the box
 	 * @param agent to move next to the box
-	 * @param box 
+	 * @param trackedBox
 	 * @return True if the movement was possible
 	 */
-	protected boolean getAgentToBox(Agent agent, Box box)
+	protected boolean getAgentToBox(Agent agent, Tracked trackedBox)
 	{
 		int initialStep = planner.getInitialStep(agent);
-		List<Action> actions = actionSearch.search(agent, agent, box.getCopyLocation(), 1, initialStep);
+		Tracked tracked = new Tracked();
+		tracked.setLocation(agent.getCopyLocation());
+		tracked.type= Tracked.Type.AGENTT;
+		tracked.agent = agent;
+		List<Action> actions = actionSearch.search(agent, tracked, trackedBox.box.getCopyLocation(), 1, initialStep);
 
 		if (actions == null)
 		{
-			logger.info(agent + " could not find path to box " + box.getLetter());
+			logger.info(agent + " could not find path to box " + trackedBox.box.getLetter());
 			return false;			
 		}
-		logger.info(agent + " to " + box + ":\t\t" + actions.toString());
+		logger.info(agent + " to " + trackedBox.toString() + ":\t\t" + actions.toString());
 
 		planner.getActions().get(agent.getNumber()).addAll(actions);
 		executeActions(agent, initialStep, actions);
@@ -59,9 +66,13 @@ public class Executor {
 	 * @param location to move the the object to
 	 * @return True if the movement is possible
 	 */
-	protected boolean getObjectToLocation(Agent agent, Location tracked, Location location)
+	protected boolean getObjectToLocation(Agent agent, Tracked tracked, Location location)
 	{
 		int initialStep = planner.getInitialStep(agent);
+
+		//Tracked  tracked2 = new Tracked();
+		//tracked2.setLocation(tracked);
+
 		List<Action> actions = actionSearch.search(agent, tracked, location, 0, initialStep);
 
 		if (actions == null)
@@ -69,7 +80,7 @@ public class Executor {
 			logger.info(agent.getName() + " could not find path to location " + location);
 			return false;			
 		}
-		logger.info(tracked + " to " + location + ":\t\t" + actions.toString());
+		logger.info(tracked.toString() + " to " + location + ":\t\t" + actions.toString());
 
 		planner.getActions().get(agent.getNumber()).addAll(actions);
 		executeActions(agent, initialStep, actions);
@@ -92,12 +103,20 @@ public class Executor {
 
 		logger.info(agent + " skipping: " + actions.size() + " times");
 	}
-	
-	private void executeActions(Agent agent, int initialStep, List<Action> actions)
+
+	//			get only the agent modified
+	public void executeActions(Agent agent, int initialStep, List<Action> actions)
 	{
 		if (actions.isEmpty()) return;
 
-		FutureModel futureModel = new FutureModel(planner.getModel(initialStep));
+		CellModel cellModel = planner.getModel(initialStep);
+		FutureModel futureModel = new FutureModel(cellModel);
+
+		boolean result2 = cellModel.equals(planner.getModel(initialStep));
+		boolean result3 = cellModel.equals(futureModel.getCellMode());
+		FutureModel futureModel2 = new FutureModel(cellModel);
+		boolean result12 = (futureModel2.getCellMode()).equals(futureModel.getCellMode());
+
 		int step = initialStep;
 		// Create models for the actions
 		planner.createModels(initialStep, actions);
@@ -108,7 +127,10 @@ public class Executor {
 			futureModel.getCellMode().doExecute(action);
 			updateModelWithLocations(futureModel.getOriginalLocations(), ++step);
 		}
-		
+
+		FutureModel futureModel3 = new FutureModel(cellModel);
+		boolean result123 = futureModel3.getCellMode().equals(futureModel.getCellMode());
+
 		for (int futureStep = ++step; futureStep < planner.dataModelCount(); futureStep++)
 		{
 			updateModelWithLocations(futureModel.getOriginalLocations(), futureStep);
@@ -118,6 +140,10 @@ public class Executor {
 		{
 			blockGridLocation(agent.getNumber(), modelStep);
 		}
+
+		FutureModel futureModel22 = new FutureModel(cellModel);
+		boolean resultttttttt = futureModel22.getCellMode().equals(futureModel.getCellMode());
+
 	}
 	
 	private void updateModelWithLocations(Map<Location, Location> originalLocations, int step)

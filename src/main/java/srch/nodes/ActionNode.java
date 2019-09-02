@@ -7,6 +7,7 @@ import level.action.Action;
 import level.action.Action.ActionType;
 import level.action.SkipAction;
 import level.cell.Agent;
+import level.cell.Tracked;
 import srch.Node;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class ActionNode extends Node {
 	private Action action;
 	private SimulationModel model;
 	
-	public ActionNode(Agent agent, Location tracked, int initialStep)
+	public ActionNode(Agent agent, Tracked tracked, int initialStep)
 	{
 		super(agent.getCopyLocation());
 

@@ -17,12 +17,11 @@ public abstract class Lettered extends Location {
 	{
 		this(new Location(x, y), letter);
 	}
-	
 	public char getLetter()
 	{
 		return letter;
 	}
-	
+
 	@Override
 	public String toString() {
 		return letter + " " + super.toString();

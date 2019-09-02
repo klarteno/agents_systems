@@ -24,9 +24,9 @@ public class GridOperations {
     public static final int		GOAL_MASK 	= 0xFF0000;
     public static final int		BOX_MASK 	= 0xFF000000;
 	
-	protected int		width, 
-						height;    
-    protected int[][] 	data;
+	private  int	width = 0,
+					height= 0;
+    private final int[][] 	data;
 
 	public GridOperations(int width, int height)
 	{
@@ -34,38 +34,46 @@ public class GridOperations {
 		this.height	= height;		
 		this.data 	= new int[width][height];
 	}
-	
+
 	public GridOperations(int[][] data)
 	{
 		this.width 	= data.length;
-		this.height	= data[0].length;		
-		this.data 	= data;
+		this.height	= data[0].length;
+		this.data = util.CollectionUtil.clone(data);
 	}
 	
 	public GridOperations(GridOperations model)
 	{		
-		this.data 	= model.deepCopyData();		
+		this.data 	= model.cloneData();
 		this.width 	= data.length;
 		this.height = data[0].length;
 	}
-	
+
+	public int getWidth(){
+		return this.width;
+	}
+
+	public int getHeight(){
+		return this.height;
+	}
+
 	public boolean isSolved(Location l) {
 		return isSolved(l.x, l.y);
 	}
 	
-	public boolean isSolved(int x, int y) {
+	private boolean isSolved(int x, int y) {
 		return hasObject(GOAL, x, y) && (data[x][y] & GOAL_MASK) == ((data[x][y] & BOX_MASK) >> 8);
 	}
-	
-	public boolean isBlocked(Location l)
+
+	public boolean isNextCellFree(Location l)
 	{
 		for (Direction dir : Direction.EVERY)
 		{
-			if (isFree(l.newLocation(dir))) return false;
+			if (isFree(l.newLocation(dir))) return true;
 		}
-		return true;
+		return false;
 	}
-	
+
 	public int isFreeAdjacent(int agNumber, Location l)
 	{
 		int count = 0;
@@ -83,9 +91,17 @@ public class GridOperations {
 		return count;
 	}
     
-    public boolean inGrid(int x, int y) {
+    private boolean inGrid(int x, int y) {
         return y >= 0 && y < height && x >= 0 && x < width;
     }
+
+	public boolean containsInGrid(int x, int y,int obj ) {
+		return (data[x][y]^obj) == 0 ;
+	}
+
+	public void addToGrid(int x, int y,int obj ) {
+		 data[x][y] = obj;
+	}
 
     public boolean hasObject(int obj, Location l) {
         return hasObject(obj, l.x, l.y);
@@ -107,15 +123,15 @@ public class GridOperations {
         return isFree(l.x, l.y);
     }
 
-    public boolean isFree(int x, int y) {
-        return inGrid(x, y) && (data[x][y] & (WALL | AGENT | BOX)) == 0;
+    private boolean isFree(int x, int y) {
+		return inGrid(x, y) && (data[x][y] & (WALL | AGENT | BOX)) == 0;
     }
 
     public boolean isFree(int obj, Location l) {
         return isFree(obj, l.x, l.y);
     }
     
-    public boolean isFree(int obj, int x, int y) {
+    private boolean isFree(int obj, int x, int y) {
     	return inGrid(x, y) && (data[x][y] & obj) == 0;
     }
     
@@ -123,7 +139,7 @@ public class GridOperations {
     	return isFree(obj, mask, l.x, l.y);
     }
     
-    public boolean isFree(int obj, int mask, int x, int y) {
+    private boolean isFree(int obj, int mask, int x, int y) {
     	return inGrid(x, y) && getMasked(mask, x, y) != obj;
     }
     
@@ -139,7 +155,7 @@ public class GridOperations {
         remove(obj, l.x, l.y);
     }
 
-    public void remove(int obj, int x, int y) 
+    private void remove(int obj, int x, int y)
     {
     	if ((obj & AGENT) != 0 || (obj & BOX) != 0)
     	{
@@ -184,11 +200,11 @@ public class GridOperations {
 		return getMasked(mask, l.x, l.y);
 	}
 	
-    public int getMasked(int mask, int x, int y) {
+    private int getMasked(int mask, int x, int y) {
 		return data[x][y] & mask;
 	}
 	
-	public int[][] deepCopyData() 
+	private int[][] cloneData()
 	{
 	    int[][] result = new int[data.length][data[0].length];
 
@@ -202,7 +218,7 @@ public class GridOperations {
 	    return result;
 	}
 	
-	public void deepAddData(GridOperations model)
+	public void addClonedData(GridOperations model)
 	{	    
 		int[][] data = model.data;
 		

@@ -1,7 +1,5 @@
 package env;
 
-import env.model.OverlayModel;
-
 public enum PlanState {
 
     planAgentToBox {

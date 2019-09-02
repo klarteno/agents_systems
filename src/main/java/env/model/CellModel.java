@@ -3,7 +3,7 @@ package env.model;
 import level.Location;
 import level.cell.*;
 import logging.LoggerFactory;
-import util.ModelUtil;
+import util.CollectionUtil;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -44,9 +44,9 @@ public class CellModel extends ActionModel {
 		goals		= new HashSet<>(model.goals);
 		boxes		= new HashSet<>(model.boxes);
 		
-		agentArray 	= ModelUtil.deepCopyAgents(model.agentArray);
-		goalArray 	= ModelUtil.deepCopyGoals(model.goalArray);
-		boxArray 	= ModelUtil.deepCopyBoxes(model.boxArray);
+		agentArray 	= CollectionUtil.clone(model.agentArray);
+		goalArray 	= CollectionUtil.clone(model.goalArray);
+		boxArray 	= CollectionUtil.clone(model.boxArray);
 	}
     
     public int getNbAgs() {

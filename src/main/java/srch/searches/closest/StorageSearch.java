@@ -2,7 +2,7 @@ package srch.searches.closest;
 
 import env.model.CellModel;
 import env.model.GridOperations;
-import env.model.OverlayModel;
+import env.model.MaskGridCollection;
 import level.Location;
 import level.cell.Agent;
 import srch.Evaluation.AStar;
@@ -20,7 +20,7 @@ import java.util.function.Predicate;
 
 public class StorageSearch extends Search implements Heuristic {
 	
-	public  Location search(Location from, Agent agent, boolean selfHelp, boolean isAgent, OverlayModel overlay, CellModel model,int freeCells,GridOperations gridOperations)
+	public  Location search(Location from, Agent agent, boolean selfHelp, boolean isAgent, MaskGridCollection overlay, CellModel model, int freeCells, GridOperations gridOperations)
 	{
 		List<Predicate<StorageNode>> predicates = new ArrayList<>(Arrays.asList(
 				hasNoDependencies(hasXFreeAdjacent(1)),
@@ -56,10 +56,10 @@ public class StorageSearch extends Search implements Heuristic {
 	}
 	
 	private boolean selfHelp, canTurn;
-	private OverlayModel overlay;
+	private MaskGridCollection overlay;
 	private Predicate<StorageNode> goalPredicate;
 	
-	private StorageSearch(boolean selfHelp, OverlayModel overlay, Predicate<StorageNode> goalPredicate)
+	private StorageSearch(boolean selfHelp, MaskGridCollection overlay, Predicate<StorageNode> goalPredicate)
 	{
 		super();
 		
@@ -130,7 +130,7 @@ public class StorageSearch extends Search implements Heuristic {
 		return n -> n.getModel().isFreeAdjacent(n.getAgentNumber(), n.getLocation()) == x;
 	}
 	
-	private static Predicate<StorageNode> isXParentFree(OverlayModel overlay, int x)
+	private static Predicate<StorageNode> isXParentFree(MaskGridCollection overlay, int x)
 	{		
 		return parent ->
 		{

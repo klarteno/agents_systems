@@ -8,6 +8,7 @@ import level.Location;
 import level.action.Action;
 import level.cell.Agent;
 import level.cell.Goal;
+import level.cell.Tracked;
 import srch.Evaluation.AStar;
 import srch.Heuristic;
 import srch.Node;
@@ -28,9 +29,9 @@ public class ActionSearch extends Search implements Heuristic {
 	private Location goalLocation;
 	private int 	 goalDistance;
 
-	public List<Action> search(Agent agent, Location tracked, Location to, int proximity, int initialStep)
+	public List<Action> search(Agent agent, Tracked tracked, Location to, int proximity, int initialStep)
 	{
-		return new ActionSearch(tracked.getCopyLocation(), to, proximity, gridOperations).search(new ActionNode(agent, tracked, initialStep),gridOperations);
+		return new ActionSearch(tracked.getLocation().getCopyLocation(), to, proximity, gridOperations).search(new ActionNode(agent, tracked, initialStep),gridOperations);
 	}
 
 	public ActionSearch(GridOperations gridOperations)
@@ -65,7 +66,7 @@ public class ActionSearch extends Search implements Heuristic {
 		}
 
 		return   node.getTrackedLoc().distance(goalLocation) == goalDistance &&
-				!model.getActionModel().getGridOperations().isBlocked(n.getLocation());
+                model.getActionModel().getGridOperations().isNextCellFree(n.getLocation());
 	}
 
 	@Override

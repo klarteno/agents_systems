@@ -7,6 +7,7 @@ import level.action.Action;
 import level.cell.Agent;
 import level.cell.Box;
 import level.cell.Goal;
+import level.cell.Tracked;
 import logging.LoggerFactory;
 import srch.nodes.DistanceNode;
 import srch.searches.DistanceSearch;
@@ -22,7 +23,6 @@ public class Planner {
 	private static final Logger logger = LoggerFactory.getLogger(Planner.class.getName());
 
 	private static Planner instance;
-	private Preprocessor preprocessor;
 
 	private ArrayList<CellModel> 	dataModels;
 	private ArrayList<List<Action>> actions;
@@ -34,83 +34,64 @@ public class Planner {
 
 	public Planner(WorldFactory worlProxy) {
 		this.worldProxy = worlProxy;
+
+		dependencyPath = new DependencyPath();
+		storageSearch = new StorageSearch();
 	}
 
 	public static Planner getInstance() {
 		return instance;
 	}
-
+	public void  setExecutor(Executor executor) {
+		this.executor = executor;
+	}
 	public int dataModelCount() {
 		return dataModels.size();
 	}
-
 	public WorldFactory getWorldProxy(){
 		return this.worldProxy;
 	}
-	/**
-	 * Find a solution to the level
-	 */
-	public void plan()
+
+	public CellModel initPlan()
 	{
-		logger.setLevel(Level.FINE);
+		logger.setLevel(Level.WARNING);
 		
 		instance = this;
-
 		SimulationModel.setPlanner(this);
+		dataModels = new ArrayList<>(Arrays.asList(new CellModel(worldProxy.getInitialModel())));
+		actions = new ArrayList<List<Action>>(worldProxy.getInitialModel().getNbAgs());
 		
-		executor = new Executor(this);
-		preprocessor = new Preprocessor();
-		dependencyPath = new DependencyPath();
-		storageSearch = new StorageSearch();
-
-		dataModels = new ArrayList<CellModel>(Arrays.asList(new CellModel(worldProxy.getCellModel())));
-		
-		actions = new ArrayList<List<Action>>(worldProxy.getCellModel().getNbAgs());
-		
-		for (int i = 0; i < worldProxy.getCellModel().getNbAgs(); i++)
+		for (int i = 0; i < worldProxy.getInitialModel().getNbAgs(); i++)
 		{
 			actions.add(new ArrayList<Action>());
 		}
 		
-		solveLevel(preprocessor.preprocess(worldProxy.getCellModel()));
+		return worldProxy.getInitialModel();
 	}
-	
-	private void solveLevel(List<Goal> goals)
-	{
-		while (!goals.isEmpty())
-		{
-			for (Goal goal : goals)
-			{
-				solveGoal(goal);
-			}
-			int lastStep = getLastStep();
-			goals = preprocessor.preprocess(getModel(lastStep));
-		}
-	}
-	
-	private void solveGoal(Goal goal)
+
+	public boolean solveGoal(Goal goal)
 	{		
 		Box box			= goal.getBox();
 		Agent agent 	= box.getAgent();
 		Location loc 	= goal.getCopyLocation();
-		
-		// Agent will peek at the next goal to solve
 		agent.removeGoal(goal);
 
-		planAgentToBox(agent, box, new OverlayModel(worldProxy.getCellModel().getGridOperations()));
-		planObjectToLocation(agent, box, loc, new OverlayModel(worldProxy.getCellModel().getGridOperations()));
+		Tracked trackedBox = new Tracked();
+		trackedBox.setLocation(box.getCopyLocation());
+		trackedBox.type= Tracked.Type.BOXX;
+		trackedBox.box = box;
+
+		return planAgentToBox(agent, trackedBox) && planObjectToLocation(agent, trackedBox, loc);
 	}
 
-	private boolean planAgentToBox(Agent agent, Box box, OverlayModel previousOverlay)
+	private boolean planAgentToBox(Agent agent, Tracked trackedBox)
 	{
-		int distance = agent.getCopyLocation().distance(box.getCopyLocation());
+		int distance = agent.getCopyLocation().distance(trackedBox.getLocation().getCopyLocation());
 		if (distance  == 1) return true;
 
 		int				step			= getInitialStep(agent);
 		CellModel 		model 			= getModel(step);
-		DependencyPath 	dependencyPath 	= this.dependencyPath.getDependencyPath(agent, box, step, worldProxy.getCellModel().getGridOperations());
-
-
+		DependencyPath 	dependencyPath 	= this.dependencyPath.getDependencyPath(agent, trackedBox, step, worldProxy.getInitialModel().getGridOperations());
 
 		if (dependencyPath.hasDependencies())
 		{
@@ -119,15 +100,15 @@ public class Planner {
 			if (step < dependency.getValue()) 
 			{
 				executor.startStopActions(agent, dependency.getValue() - step);
-				return planAgentToBox(agent, box, previousOverlay);
+				return planAgentToBox(agent, trackedBox);
 			}
 
 			// Add overlay for getting box to goal
-			OverlayModel overlay			= new OverlayModel(worldProxy.getCellModel().getGridOperations());
-			if (box.getGoal() != null)
+			MaskGridCollection overlay			= new MaskGridCollection(worldProxy.getInitialModel().getGridOperations());
+			if (trackedBox.box.getGoal() != null)
 			{
-				Map<Location, Integer> result = new DistanceSearch(box.getGoal().getCopyLocation(), 0)
-						.search(new DistanceNode(box.getCopyLocation()), worldProxy.getCellModel().getGridOperations());
+				Map<Location, Integer> result = new DistanceSearch(trackedBox.box.getGoal().getCopyLocation(), 0)
+						.search(new DistanceNode(trackedBox.getLocation().getCopyLocation()), worldProxy.getInitialModel().getGridOperations());
 
 				Set<Location> tmp = result.keySet();
 				overlay.addOverlay(tmp);
@@ -143,30 +124,29 @@ public class Planner {
 //				executor.executeSkips(agent, newStep - step);
 				executor.startStopActions(agent, 1);
 			}			
-			return planAgentToBox(agent, box, previousOverlay);
+			return planAgentToBox(agent, trackedBox);
 		}
 
-		return executor.getAgentToBox(agent, box);
+		return executor.getAgentToBox(agent, trackedBox);
 	}
 
-	private boolean planObjectToLocation(Agent agent, Location tracked, Location loc, OverlayModel previousOverlay)
+	private boolean planObjectToLocation(Agent agent, Tracked tracked, Location loc)
 	{
 		int				step			= getInitialStep(agent);
 		CellModel 		model 			= getModel(step);
-		DependencyPath 	dependencyPath 	= this.dependencyPath.getDependencyPath(agent, tracked, loc, step, worldProxy.getCellModel().getGridOperations());
-
+		DependencyPath 	dependencyPath 	= this.dependencyPath.getDependencyPath(agent, tracked.getLocation(), loc, step, worldProxy.getInitialModel().getGridOperations());
 
 		if (dependencyPath.hasDependencies())
 		{
-			Entry<Location, Integer> dependency = dependencyPath.getDependency(tracked.getCopyLocation(),this);
+			Entry<Location, Integer> dependency = dependencyPath.getDependency(tracked.getLocation().getCopyLocation(),this);
 			
 			if (step < dependency.getValue()) 
 			{
 				executor.startStopActions(agent, dependency.getValue() - step);
-				return planAgentToTracked(agent, tracked, loc, previousOverlay);
+				return planAgentToTracked(agent, tracked, loc);
 			}
 
-			OverlayModel overlay			= new OverlayModel(worldProxy.getCellModel().getGridOperations());
+			MaskGridCollection overlay			= new MaskGridCollection(worldProxy.getInitialModel().getGridOperations());
 			overlay.addOverlay(dependencyPath.getPath());
 			int newStep = solveDependency(agent, dependency.getKey(), overlay, model);
 			overlay.removeOverlay(); //could be removed
@@ -177,43 +157,51 @@ public class Planner {
 //				executor.executeSkips(agent, newStep - step);
 				executor.startStopActions(agent, 1);
 			}
-			return planAgentToTracked(agent, tracked, loc, previousOverlay);
+			return planAgentToTracked(agent, tracked, loc);
 		}
 
 		return executor.getObjectToLocation(agent, tracked, loc);
 	}
 	
-	private boolean planAgentToTracked(Agent agent, Location tracked, Location loc, OverlayModel previousOverlay)
+	private boolean planAgentToTracked(Agent agent, Tracked tracked, Location loc)
 	{
-		if (tracked instanceof Box)
+		if (tracked.type == Tracked.Type.BOXX )
 		{
-			planAgentToBox(agent, (Box) tracked, previousOverlay);
-			return planObjectToLocation(agent, tracked, loc, previousOverlay);
+			planAgentToBox(agent, tracked);
+			return planObjectToLocation(agent, tracked, loc);
 		}
-		return planObjectToLocation(agent, tracked, loc, previousOverlay);
+		return planObjectToLocation(agent, tracked, loc);
 	}
 
-	private int solveDependency(Agent toHelp, Location dependency, OverlayModel overlay, CellModel model)
+	private int solveDependency(Agent toHelp, Location dependency, MaskGridCollection overlay, CellModel model)
 	{		
 		if (model.hasObject(GridOperations.BOX, dependency))
 		{
 			Box box 	= model.getBox(dependency);
-			//Agent agent 	= model.getAgent(AgentSearch.search(box.getColor(), box.getLocation(), model,worlProxy.getCellModel().getGridOperations()));
 			AgentSearch agentSearch = new AgentSearch(model);
 			Agent agent 	= model.getAgent(agentSearch.search(box.getColor(), box.getCopyLocation()));
 
-			return solveAgentToBoxDependency(toHelp, agent, box, overlay);
+			Tracked trackedBox = new Tracked();
+			trackedBox.setLocation(box.getCopyLocation());
+			trackedBox.type= Tracked.Type.BOXX;
+			trackedBox.box = box;
+
+			return solveAgentToBoxDependency(toHelp, agent, trackedBox, overlay);
 		}
 		else if (model.hasObject(GridOperations.AGENT, dependency))
 		{
 			Agent agent = model.getAgent(dependency);
+			Tracked trackedAgent = new Tracked();
+			trackedAgent.setLocation(agent.getCopyLocation());
+			trackedAgent.type= Tracked.Type.AGENTT;
+			trackedAgent.agent = agent;
 
-			return solveObjectToLocationDependency(toHelp, agent, agent, overlay);
+			return solveObjectToLocationDependency(toHelp, agent, trackedAgent, overlay);
 		}		
 		throw new UnsupportedOperationException("Attempt to solve unknown dependency");
 	}
 
-	private int solveAgentToBoxDependency(Agent toHelp, Agent agent, Box box, OverlayModel overlay)
+	private int solveAgentToBoxDependency(Agent toHelp, Agent agent, Tracked boxTracked, MaskGridCollection overlay)
 	{
 		int agentStep = getInitialStep(agent);
 		if (agentStep > getInitialStep(toHelp))
@@ -221,13 +209,13 @@ public class Planner {
 			return agentStep;
 		}
 		
-		planAgentToBox(agent, box, overlay);
+		planAgentToBox(agent, boxTracked);
 		if (toHelp.equals(agent)) overlay.removeOverlay();
 		
-		return solveObjectToLocationDependency(toHelp, agent, box, overlay);
+		return solveObjectToLocationDependency(toHelp, agent, boxTracked, overlay);
 	}
 	
-	private int solveObjectToLocationDependency(Agent toHelp, Agent agent, Location tracked, OverlayModel overlay)
+	private int solveObjectToLocationDependency(Agent toHelp, Agent agent, Tracked tracked, MaskGridCollection overlay)
 	{
 		int agentStep = getInitialStep(agent);
 		if (agentStep > getInitialStep(toHelp))
@@ -238,15 +226,15 @@ public class Planner {
 		CellModel model = getModel(agentStep);
 		
 		Location storage = null;
-		boolean isAgent = tracked instanceof Agent;
+		boolean isAgent = tracked.type == Tracked.Type.AGENTT;
 		if (toHelp.equals(agent))
 		{
-			storage = storageSearch.search(tracked.getCopyLocation(), agent, true, isAgent, overlay, model, worldProxy.getFreeCellCount(), worldProxy.getCellModel().getGridOperations());
+			storage = storageSearch.search(tracked.getLocation().getCopyLocation(), agent, true, isAgent, overlay, model, worldProxy.getFreeCellCount(), worldProxy.getInitialModel().getGridOperations());
 		}
 
 		if (storage == null)
 		{
-			storage = storageSearch.search(tracked.getCopyLocation(), agent, false, isAgent, overlay, model, worldProxy.getFreeCellCount(), worldProxy.getCellModel().getGridOperations());
+			storage = storageSearch.search(tracked.getLocation().getCopyLocation(), agent, false, isAgent, overlay, model, worldProxy.getFreeCellCount(), worldProxy.getInitialModel().getGridOperations());
 		}		
 		
 		if (storage == null)
@@ -255,7 +243,7 @@ public class Planner {
 			throw new UnsupportedOperationException("No storage available");
 		}
 		
-		planObjectToLocation(agent, tracked, storage, overlay);
+		planObjectToLocation(agent, tracked, storage);
 		
 		return -1;
 	}
@@ -329,7 +317,6 @@ public class Planner {
 		}
 	}
 
-
 	public int getDependencyCount(int step, Location loc, int dependency){
 		int dependencyCount = 0;
 
@@ -358,7 +345,6 @@ public class Planner {
 	public int getLastStep()
 	{
 		//or min of actions
-		//Optional<List<Action>> action = actions.stream().max((a, b) -> a.size() - b.size());
 		Optional<List<Action>> action = actions.stream().max(Comparator.comparingInt(List::size));
 		return action.map(List::size).orElse(0);
 	}

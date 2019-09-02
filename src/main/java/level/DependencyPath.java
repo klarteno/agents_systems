@@ -4,6 +4,7 @@ import env.model.GridOperations;
 import env.planner.Planner;
 import level.cell.Agent;
 import level.cell.Box;
+import level.cell.Tracked;
 import srch.searches.DependencyPathSearch;
 
 import java.util.*;
@@ -84,14 +85,14 @@ public class DependencyPath {
 	/**
 	 * Get the dependency path between the locations with a box.
 	 * @param agent
-	 * @param box
+	 * @param trackedBox
 	 * @param initialStep
 	 * @return
 	 */
-	public  DependencyPath getDependencyPath(Agent agent, Box box, int initialStep,GridOperations gridOperations)
+	public  DependencyPath getDependencyPath(Agent agent, Tracked trackedBox, int initialStep, GridOperations gridOperations)
 	{
-		return (DependencyPath)new DependencyPathSearch(box.getCopyLocation()).
-				getDependencyPath(agent, agent.getCopyLocation(), box.getCopyLocation(), true, initialStep, gridOperations);
+		return (DependencyPath)new DependencyPathSearch(trackedBox.getLocation().getCopyLocation()).
+				getDependencyPath(agent, agent.getCopyLocation(), trackedBox.getLocation().getCopyLocation(), true, initialStep, gridOperations);
 
 	}
 	
